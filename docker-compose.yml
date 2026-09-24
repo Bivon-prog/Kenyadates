@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Container
+  postgres:
+    image: postgres:16-alpine
+    container_name: kenyadates_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kenyadates2026_password
+      POSTGRES_DB: kenyadates_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kenyadates_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # NestJS Backend API Container
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kenyadates_backend
+    restart: always
+    environment:
+      PORT: 5000
+      DATABASE_URL: postgresql://postgres:kenyadates2026_password@postgres:5432/kenyadates_db?schema=public
+      JWT_SECRET: kenyadates_super_secret_jwt_key_2026
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Next.js Web App & PWA Container
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: kenyadates_web
+    restart: always
+    environment:
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

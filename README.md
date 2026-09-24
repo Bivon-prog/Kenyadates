@@ -19,7 +19,18 @@ kenyadates/
 
 ## ⚡ Getting Started
 
-### 1. Backend API (`/backend`)
+### 🚀 One-Command Docker Deployment (Recommended)
+```bash
+docker compose up --build
+```
+This automatically builds and spins up:
+- **PostgreSQL Database**: `localhost:5432`
+- **NestJS Backend API**: `http://localhost:5000` (Swagger docs: `http://localhost:5000/api/docs`)
+- **Next.js Web App & PWA**: `http://localhost:3000`
+
+---
+
+### Manual Setup (Without Docker)
 ```bash
 cd backend
 npm install
