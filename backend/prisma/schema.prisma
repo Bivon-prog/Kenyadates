@@ -1,0 +1,138 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id                 String             @id @default(uuid())
+  phoneNumber        String             @unique
+  email              String?            @unique
+  passwordHash       String
+  role               Role               @default(USER)
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  coinBalance        Int                @default(50)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  profile            Profile?
+  sentLikes          Like[]             @relation("SentLikes")
+  receivedLikes      Like[]             @relation("ReceivedLikes")
+  matches1           Match[]            @relation("MatchUser1")
+  matches2           Match[]            @relation("MatchUser2")
+  messages           Message[]          @relation("SentMessages")
+  transactions       Transaction[]
+  reportsSubmitted   Report[]           @relation("Reporter")
+  reportsReceived    Report[]           @relation("ReportedUser")
+}
+
+model Profile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName  String
+  age          Int
+  gender       String
+  city         String
+  county       String
+  tribe        String?
+  bio          String?
+  height       Int?
+  occupation   String?
+  education    String?
+  photos       String[] @default([])
+  interests    String[] @default([])
+  languages    String[] @default(["English", "Swahili"])
+  isOnline     Boolean  @default(false)
+  lastActiveAt DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Like {
+  id         String   @id @default(uuid())
+  fromUserId String
+  toUserId   String
+  isSuper    Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  fromUser   User     @relation("SentLikes", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User     @relation("ReceivedLikes", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@unique([fromUserId, toUserId])
+}
+
+model Match {
+  id        String    @id @default(uuid())
+  user1Id   String
+  user2Id   String
+  createdAt DateTime  @default(now())
+  messages  Message[]
+
+  user1     User      @relation("MatchUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User      @relation("MatchUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+
+  @@unique([user1Id, user2Id])
+}
+
+model Message {
+  id            String   @id @default(uuid())
+  matchId       String
+  senderId      String
+  content       String
+  translatedText String?
+  isRead        Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  match         Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  sender        User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Transaction {
+  id             String            @id @default(uuid())
+  userId         String
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mpesaReceiptNo String?           @unique
+  checkoutReqId  String            @unique
+  phoneNumber    String
+  amount         Float
+  coinsPurchased Int
+  status         TransactionStatus @default(PENDING)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model Report {
+  id             String   @id @default(uuid())
+  reporterId     String
+  reportedUserId String
+  reason         String
+  description    String?
+  resolved       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  reporter       User     @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser   User     @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: Cascade)
+}
