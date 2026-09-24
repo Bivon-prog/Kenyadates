@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -7,32 +7,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum Role {
-  USER
-  ADMIN
-  MODERATOR
-}
-
-enum VerificationStatus {
-  UNVERIFIED
-  PENDING
-  VERIFIED
-  REJECTED
-}
-
-enum TransactionStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
 
 model User {
   id                 String             @id @default(uuid())
   phoneNumber        String             @unique
   email              String?            @unique
   passwordHash       String
-  role               Role               @default(USER)
-  verificationStatus VerificationStatus @default(UNVERIFIED)
+  role               String             @default("USER")
+  verificationStatus String             @default("UNVERIFIED")
   coinBalance        Int                @default(50)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -62,9 +44,9 @@ model Profile {
   height       Int?
   occupation   String?
   education    String?
-  photos       String[] @default([])
-  interests    String[] @default([])
-  languages    String[] @default(["English", "Swahili"])
+  photos       String   @default("[]")
+  interests    String   @default("[]")
+  languages    String   @default("[\"English\", \"Swahili\"]")
   isOnline     Boolean  @default(false)
   lastActiveAt DateTime @default(now())
   createdAt    DateTime @default(now())
@@ -119,7 +101,7 @@ model Transaction {
   phoneNumber    String
   amount         Float
   coinsPurchased Int
-  status         TransactionStatus @default(PENDING)
+  status         String            @default("PENDING")
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 }

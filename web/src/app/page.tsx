@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video, Coins, Crown, Check, Menu, X, Sparkles, Users, Lock } from "lucide-react";
 
-import InstallPwaModal from "@/components/InstallPwaModal";
+import InstallPrompt from "@/components/InstallPrompt";
 
 const HERO_PROFILES = [
   { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600", emoji: "👩🏾" },
@@ -84,7 +84,7 @@ export default function LandingPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <InstallPwaModal />
+          <InstallPrompt />
           <Link href="/login" className="btn-secondary" style={{ padding: "10px 24px", fontSize: 14 }}>Sign In</Link>
           <Link href="/register" className="btn-primary" style={{ padding: "10px 24px", fontSize: 14 }}>Join Free</Link>
           <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "none", background: "none", border: "none", color: "white", cursor: "pointer" }} className="md:hidden block">
@@ -216,7 +216,7 @@ export default function LandingPage() {
                   <div style={{ position: "absolute", top: 40, left: "60%", width: "80%", height: 1, background: "var(--border)", display: "none" }} />
                 )}
                 <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(232,51,109,0.15)", border: "2px solid var(--border-accent)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, margin: "0 auto 20px" }}>
-                  {s.emoji}
+                  {s.icon}
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-primary)", marginBottom: 8, letterSpacing: 2 }}>STEP {s.step}</div>
                 <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>{s.title}</h3>

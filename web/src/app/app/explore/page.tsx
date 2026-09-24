@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, User, Home, Compass, Search, Filter, X, MapPin, Shield, Crown, ChevronDown, SlidersHorizontal, Star } from "lucide-react";
 
@@ -66,8 +66,50 @@ export default function ExplorePage() {
   const [search, setSearch] = useState("");
   const [likes, setLikes] = useState<number[]>([]);
   const [filters, setFilters] = useState({ minAge: 18, maxAge: 45, maxDistance: 500, verified: false, online: false, premium: false });
+  const [profiles, setProfiles] = useState(ALL_PROFILES);
+  const [mpesaModalOpen, setMpesaModalOpen] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [amount, setAmount] = useState(100);
 
-  const filtered = ALL_PROFILES.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+  useEffect(() => {
+    fetch('http://localhost:5000/discovery/matches')
+      .then(res => res.json())
+      .then(data => {
+        const fetchedProfiles = data.map((d: any) => ({
+          id: parseInt(d.id) + 1000,
+          name: d.name,
+          age: d.age,
+          city: d.location,
+          distance: "5 km",
+          verified: true,
+          online: true,
+          premium: "gold",
+          goal: "Serious Relationship",
+          interests: ["Travel ✈️", "Fitness 💪"],
+          emoji: "👩🏾",
+          match: 99,
+          photoUrl: d.photoUrl
+        }));
+        setProfiles([...fetchedProfiles, ...ALL_PROFILES]);
+      })
+      .catch(err => console.error("Error fetching matches:", err));
+  }, []);
+
+  const handleMpesa = () => {
+    fetch('http://localhost:5000/payments/stkpush', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phoneNumber, amount, coins: 10 })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert("Success: " + data.message);
+      setMpesaModalOpen(false);
+    })
+    .catch(err => alert("Error: " + err));
+  };
+
+  const filtered = profiles.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div style={{ display: "flex", background: "var(--bg-primary)", minHeight: "100vh" }}>
@@ -146,8 +188,8 @@ export default function ExplorePage() {
                 onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
               >
-                <div style={{ aspectRatio: "3/4", position: "relative", background: "var(--bg-surface)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ fontSize: 70 }}>{p.emoji}</div>
+                <div style={{ aspectRatio: "3/4", position: "relative", background: "var(--bg-surface)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                  {(p as any).photoUrl ? <img src={(p as any).photoUrl} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ fontSize: 70 }}>{p.emoji}</div>}
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(13,13,13,0.95) 0%, transparent 60%)" }} />
 
                   <div style={{ position: "absolute", top: 10, left: 10, display: "flex", flexDirection: "column", gap: 4 }}>
@@ -184,7 +226,34 @@ export default function ExplorePage() {
             ))}
           </div>
         </div>
+
+        {mpesaModalOpen && (
+          <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
+            <div className="card" style={{ padding: 24, width: 300, background: "var(--bg-surface)" }}>
+              <h3 style={{ marginBottom: 16 }}>Buy Premium Coins</h3>
+              <input className="input" placeholder="Phone Number (e.g. 07...)" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} style={{ marginBottom: 12, width: '100%' }} />
+              <input className="input" type="number" placeholder="Amount (KES)" value={amount} onChange={e => setAmount(Number(e.target.value))} style={{ marginBottom: 12, width: '100%' }} />
+              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                <button onClick={() => setMpesaModalOpen(false)} style={{ padding: "8px 16px", borderRadius: "var(--radius-full)", background: "transparent", color: "var(--text)", border: "1px solid var(--border)", cursor: "pointer" }}>Cancel</button>
+                <button onClick={handleMpesa} style={{ padding: "8px 16px", borderRadius: "var(--radius-full)", background: "var(--gradient-primary)", color: "white", border: "none", cursor: "pointer" }}>Pay</button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
+      
+      {/* Floating Action Button for Premium */}
+      <button 
+        onClick={() => setMpesaModalOpen(true)}
+        style={{
+          position: "fixed", bottom: 30, right: 30, 
+          padding: "16px 24px", borderRadius: "var(--radius-full)", 
+          background: "var(--gradient-primary)", color: "white", 
+          border: "none", cursor: "pointer", fontSize: 16, fontWeight: 700,
+          boxShadow: "0 4px 12px rgba(232,51,109,0.3)", zIndex: 50
+        }}>
+        Buy Premium Coins (M-Pesa)
+      </button>
     </div>
   );
 }

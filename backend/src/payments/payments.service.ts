@@ -7,6 +7,15 @@ export class PaymentsService {
 
   constructor(private prisma: PrismaService) {}
 
+  async mockStkPush(phoneNumber: string, amount: number) {
+    this.logger.log(`Mock STK Push initiated for ${phoneNumber}, Amount: ${amount} KES`);
+    return {
+      success: true,
+      message: 'STK Push prompt sent to phone. Enter your M-Pesa PIN to complete payment.',
+      checkoutRequestId: `ws_CO_MOCK_${Date.now()}`,
+    };
+  }
+
   async initiateStkPush(userId: string, phoneNumber: string, amount: number, coins: number) {
     const formattedPhone = phoneNumber.startsWith('0')
       ? '254' + phoneNumber.substring(1)

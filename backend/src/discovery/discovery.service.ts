@@ -5,6 +5,16 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DiscoveryService {
   constructor(private prisma: PrismaService) {}
 
+  getMockMatches() {
+    return [
+      { id: '1', name: 'Amina', age: 24, location: 'Nairobi', photoUrl: 'https://i.pravatar.cc/300?img=1' },
+      { id: '2', name: 'Wanjiru', age: 26, location: 'Mombasa', photoUrl: 'https://i.pravatar.cc/300?img=5' },
+      { id: '3', name: 'Njeri', age: 23, location: 'Nakuru', photoUrl: 'https://i.pravatar.cc/300?img=9' },
+      { id: '4', name: 'Fatuma', age: 28, location: 'Kisumu', photoUrl: 'https://i.pravatar.cc/300?img=12' },
+      { id: '5', name: 'Kemunto', age: 25, location: 'Eldoret', photoUrl: 'https://i.pravatar.cc/300?img=16' },
+    ];
+  }
+
   async getRecommendations(userId: string, filters?: { city?: string; county?: string; minAge?: number; maxAge?: number }) {
     const existingLikes = await this.prisma.like.findMany({
       where: { fromUserId: userId },

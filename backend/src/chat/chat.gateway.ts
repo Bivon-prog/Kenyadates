@@ -8,14 +8,14 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({ namespace: '/chat', cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
   constructor(private chatService: ChatService) {}
 
-  @SubscribeMessage('joinMatch')
+  @SubscribeMessage('joinRoom')
   handleJoinRoom(@MessageBody('matchId') matchId: string, @ConnectedSocket() client: Socket) {
     client.join(matchId);
     return { status: 'joined', matchId };

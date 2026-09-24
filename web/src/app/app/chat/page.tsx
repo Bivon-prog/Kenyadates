@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { io } from 'socket.io-client';
 import { Heart, MessageCircle, User, Home, Compass, Send, Phone, Video, MoreVertical, Search, ArrowLeft, Smile, Paperclip, Mic, Shield, Globe, Gift, Image } from "lucide-react";
 
 const CONVERSATIONS = [
@@ -70,12 +71,62 @@ export default function ChatPage() {
   const [showTranslate, setShowTranslate] = useState(false);
   const [showQuick, setShowQuick] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Initialize socket connection
+    socketRef.current = io('http://localhost:5000/chat');
+
+    socketRef.current.on('connect', () => {
+      console.log('Connected to chat server');
+    });
+
+    socketRef.current.on('newMessage', (msg: any) => {
+      // Map received message to our UI structure
+      const newMsg = {
+        id: msg.id || Date.now(),
+        from: msg.senderId === 'me' ? 'me' : 'them',
+        text: msg.content,
+        time: "Now"
+      };
+      setMessages(prev => [...prev, newMsg as any]);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // Join room when active conversation changes
+    if (socketRef.current && activeConvo) {
+      // Create a mock matchId based on active convo
+      const matchId = `match_${activeConvo.id}`;
+      socketRef.current.emit('joinRoom', { matchId });
+    }
+  }, [activeConvo]);
 
   useEffect(() => { messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   const sendMessage = () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { id: prev.length + 1, from: "me", text: input, time: "Now" }]);
+    
+    const msgData = {
+      matchId: `match_${activeConvo.id}`,
+      senderId: 'me', // Mocking my senderId
+      content: input,
+    };
+    
+    // Optimistic UI update can be done here or handled by newMessage event
+    // Let's add it optimistically and rely on backend for others
+    // Actually the backend emits back to the room, so we'll receive it via 'newMessage'
+    // But since we just want it to work instantly on UI:
+    setMessages(prev => [...prev, { id: Date.now(), from: "me", text: input, time: "Now" }]);
+    
+    socketRef.current?.emit('sendMessage', msgData);
+    
     setInput("");
     setShowQuick(false);
   };

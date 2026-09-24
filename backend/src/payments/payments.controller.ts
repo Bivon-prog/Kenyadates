@@ -8,6 +8,14 @@ import { PaymentsService } from './payments.service';
 export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
+  @Post('stkpush')
+  @ApiOperation({ summary: 'Initiate Mock Safaricom M-Pesa STK Push Payment' })
+  stkPushMock(
+    @Body() body: { phoneNumber: string; amount: number; coins?: number },
+  ) {
+    return this.paymentsService.mockStkPush(body.phoneNumber, body.amount);
+  }
+
   @Post('mpesa/stkpush')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))

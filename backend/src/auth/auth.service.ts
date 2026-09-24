@@ -30,7 +30,7 @@ export class AuthService {
             gender: dto.gender,
             city: dto.city,
             county: dto.county,
-            photos: ['https://images.unsplash.com/photo-1534528741775-53994a69daeb'],
+            photos: JSON.stringify(['https://images.unsplash.com/photo-1534528741775-53994a69daeb']),
           },
         },
       },
