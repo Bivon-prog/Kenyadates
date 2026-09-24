@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video, Coins, Crown, Check, Menu, X, Sparkles, Users, Lock } from "lucide-react";
 
+import InstallPwaModal from "@/components/InstallPwaModal";
+
 const HERO_PROFILES = [
   { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600", emoji: "👩🏾" },
   { name: "James", age: 29, city: "Mombasa", verified: true, online: false, bg: "from-purple-500 to-indigo-600", emoji: "👨🏾" },
@@ -82,6 +84,7 @@ export default function LandingPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <InstallPwaModal />
           <Link href="/login" className="btn-secondary" style={{ padding: "10px 24px", fontSize: 14 }}>Sign In</Link>
           <Link href="/register" className="btn-primary" style={{ padding: "10px 24px", fontSize: 14 }}>Join Free</Link>
           <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "none", background: "none", border: "none", color: "white", cursor: "pointer" }} className="md:hidden block">
