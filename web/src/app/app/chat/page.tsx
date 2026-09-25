@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { io } from 'socket.io-client';
 import { Heart, MessageCircle, User, Home, Compass, Send, Phone, Video, MoreVertical, Search, ArrowLeft, Smile, Paperclip, Mic, Shield, Globe, Gift, Image } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const CONVERSATIONS = [
   { id: 1, name: "Amina", emoji: "👩🏾", online: true, lastMsg: "That sounds amazing! When are you free?", time: "2m", unread: 2, verified: true },
@@ -72,10 +73,15 @@ export default function ChatPage() {
   const [showQuick, setShowQuick] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<any>(null);
+  const { token, user } = useAuth();
 
   useEffect(() => {
-    // Initialize socket connection
-    socketRef.current = io('http://localhost:5000/chat');
+    if (!token) return;
+    
+    // Initialize socket connection with JWT
+    socketRef.current = io('http://localhost:5000/chat', {
+      auth: { token }
+    });
 
     socketRef.current.on('connect', () => {
       console.log('Connected to chat server');
@@ -85,7 +91,7 @@ export default function ChatPage() {
       // Map received message to our UI structure
       const newMsg = {
         id: msg.id || Date.now(),
-        from: msg.senderId === 'me' ? 'me' : 'them',
+        from: msg.senderId === user?.id ? 'me' : 'them',
         text: msg.content,
         time: "Now"
       };
@@ -97,7 +103,7 @@ export default function ChatPage() {
         socketRef.current.disconnect();
       }
     };
-  }, []);
+  }, [token, user?.id]);
 
   useEffect(() => {
     // Join room when active conversation changes

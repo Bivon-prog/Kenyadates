@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, MessageCircle, User, Home, Compass, Search, Filter, X, MapPin, Shield, Crown, ChevronDown, SlidersHorizontal, Star } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const ALL_PROFILES = [
   { id: 1, name: "Amina", age: 26, city: "Nairobi", distance: "2 km", verified: true, online: true, premium: "gold", goal: "Serious Relationship", interests: ["Travel ✈️", "Fitness 💪", "Music 🎵"], emoji: "👩🏾", match: 94 },
@@ -70,35 +71,46 @@ export default function ExplorePage() {
   const [mpesaModalOpen, setMpesaModalOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [amount, setAmount] = useState(100);
+  const { token, user } = useAuth();
 
   useEffect(() => {
-    fetch('http://localhost:5000/discovery/matches')
+    if (!token) return;
+    
+    fetch('http://localhost:5000/discovery/recommended', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
+        if (!Array.isArray(data)) return;
         const fetchedProfiles = data.map((d: any) => ({
-          id: parseInt(d.id) + 1000,
-          name: d.name,
-          age: d.age,
-          city: d.location,
+          id: d.id, // backend uses uuid strings now
+          name: d.profile?.displayName || "Unknown",
+          age: d.profile?.age || 25,
+          city: d.profile?.city || "Nairobi",
           distance: "5 km",
-          verified: true,
-          online: true,
+          verified: d.verificationStatus === 'VERIFIED',
+          online: d.profile?.isOnline || true,
           premium: "gold",
           goal: "Serious Relationship",
-          interests: ["Travel ✈️", "Fitness 💪"],
-          emoji: "👩🏾",
+          interests: d.profile?.interests || ["Travel ✈️", "Fitness 💪"],
+          emoji: d.profile?.gender === "Woman" ? "👩🏾" : "👨🏾",
           match: 99,
-          photoUrl: d.photoUrl
+          photoUrl: d.profile?.photos?.[0]
         }));
         setProfiles([...fetchedProfiles, ...ALL_PROFILES]);
       })
       .catch(err => console.error("Error fetching matches:", err));
-  }, []);
+  }, [token]);
 
   const handleMpesa = () => {
     fetch('http://localhost:5000/payments/stkpush', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` 
+      },
       body: JSON.stringify({ phoneNumber, amount, coins: 10 })
     })
     .then(res => res.json())

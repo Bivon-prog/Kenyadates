@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Heart, ArrowRight, ArrowLeft, Check, Camera, MapPin, User, Target, Smile } from "lucide-react";
+import { Heart, ArrowRight, ArrowLeft, Check, Camera, MapPin, User, Target, Smile, Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const INTERESTS = ["Travel ✈️", "Music 🎵", "Food 🍽️", "Sports ⚽", "Reading 📚", "Dancing 💃", "Movies 🎬", "Fitness 💪", "Art 🎨", "Gaming 🎮", "Cooking 👨‍🍳", "Nature 🌿", "Photography 📸", "Fashion 👗", "Tech 💻", "Business 📈"];
 const GOALS = [
@@ -14,13 +15,52 @@ const GENDERS = ["Man", "Woman", "Non-binary", "Prefer not to say"];
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ phone: "", otp: "", name: "", dob: "", gender: "", seeking: "", goal: "", interests: [] as string[], city: "", country: "Kenya", bio: "" });
+  const [form, setForm] = useState({ phone: "", email: "", password: "", otp: "", name: "", dob: "", gender: "", seeking: "", goal: "", interests: [] as string[], city: "Nairobi", county: "Nairobi", bio: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useAuth();
   const totalSteps = 6;
 
   const updateForm = (key: string, value: string | string[]) => setForm(prev => ({ ...prev, [key]: value }));
   const toggleInterest = (interest: string) => {
     const curr = form.interests;
     updateForm("interests", curr.includes(interest) ? curr.filter(i => i !== interest) : curr.length < 10 ? [...curr, interest] : curr);
+  };
+
+  const calculateAge = (dob: string) => {
+    if (!dob) return 18;
+    const diff = Date.now() - new Date(dob).getTime();
+    return Math.abs(new Date(diff).getUTCFullYear() - 1970);
+  };
+
+  const handleRegister = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phoneNumber: form.phone,
+          email: form.email || undefined,
+          password: form.password,
+          displayName: form.name,
+          age: calculateAge(form.dob),
+          gender: form.gender,
+          city: form.city,
+          county: form.county,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Registration failed");
+      
+      login(data.token, data.user);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,13 +111,31 @@ export default function RegisterPage() {
           {/* Step 1: Phone */}
           {step === 1 && (
             <div className="animate-fade-in">
-              <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Enter your phone 📱</h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 28 }}>We&apos;ll send you a verification code</p>
-              <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Create Account 📱</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: 14, marginBottom: 28 }}>Let&apos;s start with the basics</p>
+              
+              {error && <div style={{ color: "var(--error)", fontSize: 14, textAlign: "center", marginBottom: 10 }}>{error}</div>}
+
+              <div style={{ marginBottom: 16 }}>
                 <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Phone Number</label>
                 <div style={{ position: "relative" }}>
                   <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 14 }}>🇰🇪 +254</span>
                   <input className="input" type="tel" placeholder="7XX XXX XXX" style={{ paddingLeft: 90 }} value={form.phone} onChange={e => updateForm("phone", e.target.value)} />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Email (Optional)</label>
+                <input className="input" type="email" placeholder="you@example.com" value={form.email} onChange={e => updateForm("email", e.target.value)} />
+              </div>
+
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Password</label>
+                <div style={{ position: "relative" }}>
+                  <input className="input" type={showPassword ? "text" : "password"} placeholder="Enter your password" style={{ paddingRight: 48 }} value={form.password} onChange={e => updateForm("password", e.target.value)} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
               <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 24 }}>By continuing, you agree to our <Link href="#" style={{ color: "var(--accent-secondary)" }}>Terms</Link> & <Link href="#" style={{ color: "var(--accent-secondary)" }}>Privacy Policy</Link></p>
@@ -221,8 +279,8 @@ export default function RegisterPage() {
                 <ArrowLeft size={16} /> Back
               </button>
             )}
-            <button onClick={() => step < totalSteps ? setStep(s => s + 1) : null} className="btn-primary" style={{ flex: 2, padding: 14, fontSize: 15 }}>
-              {step === totalSteps ? "Create My Profile 🎉" : <>Continue <ArrowRight size={16} /></>}
+            <button onClick={() => step < totalSteps ? setStep(s => s + 1) : handleRegister()} className="btn-primary" style={{ flex: 2, padding: 14, fontSize: 15, opacity: loading ? 0.7 : 1 }} disabled={loading}>
+              {loading ? "Creating..." : step === totalSteps ? "Create My Profile 🎉" : <>Continue <ArrowRight size={16} /></>}
             </button>
           </div>
         </div>

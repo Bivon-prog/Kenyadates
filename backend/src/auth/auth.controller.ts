@@ -26,4 +26,11 @@ export class AuthController {
   verifyOtp(@Body() body: { phoneNumber: string; otp: string }) {
     return this.authService.verifyOtp(body.phoneNumber, body.otp);
   }
+
+  @Post('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify Email Address using Token' })
+  verifyEmail(@Body() body: { token: string }) {
+    return this.authService.verifyEmail(body.token);
+  }
 }

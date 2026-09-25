@@ -1,23 +1,44 @@
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum VerificationStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
 
 model User {
-  id                 String             @id @default(uuid())
-  phoneNumber        String             @unique
-  email              String?            @unique
-  passwordHash       String
-  role               String             @default("USER")
-  verificationStatus String             @default("UNVERIFIED")
-  coinBalance        Int                @default(50)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                     String             @id @default(uuid())
+  phoneNumber            String             @unique
+  email                  String?            @unique
+  emailVerified          Boolean            @default(false)
+  emailVerificationToken String?            @unique
+  passwordHash           String
+  role                   Role               @default(USER)
+  verificationStatus     VerificationStatus @default(UNVERIFIED)
+  coinBalance            Int                @default(50)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
   profile            Profile?
   sentLikes          Like[]             @relation("SentLikes")
@@ -44,9 +65,9 @@ model Profile {
   height       Int?
   occupation   String?
   education    String?
-  photos       String   @default("[]")
-  interests    String   @default("[]")
-  languages    String   @default("[\"English\", \"Swahili\"]")
+  photos       String[] @default([])
+  interests    String[] @default([])
+  languages    String[] @default(["English", "Swahili"])
   isOnline     Boolean  @default(false)
   lastActiveAt DateTime @default(now())
   createdAt    DateTime @default(now())
@@ -80,13 +101,13 @@ model Match {
 }
 
 model Message {
-  id            String   @id @default(uuid())
-  matchId       String
-  senderId      String
-  content       String
+  id             String   @id @default(uuid())
+  matchId        String
+  senderId       String
+  content        String
   translatedText String?
-  isRead        Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
   match         Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
   sender        User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
@@ -101,7 +122,7 @@ model Transaction {
   phoneNumber    String
   amount         Float
   coinsPurchased Int
-  status         String            @default("PENDING")
+  status         TransactionStatus @default(PENDING)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 }

@@ -2,16 +2,41 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Heart, Phone, Mail, Eye, EyeOff, ArrowRight, Sparkles } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [method, setMethod] = useState<"phone" | "email">("phone");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => setLoading(false), 2000);
+    setError("");
+
+    try {
+      // In a real app we would support email or phone, but our backend currently accepts phoneNumber
+      const res = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: phone, password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      login(data.token, data.user);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,25 +77,27 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            {error && <div style={{ color: "var(--error)", fontSize: 14, textAlign: "center", marginBottom: 10 }}>{error}</div>}
+
             {method === "phone" ? (
               <div>
                 <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Phone Number</label>
                 <div style={{ position: "relative" }}>
                   <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 14 }}>🇰🇪 +254</span>
-                  <input className="input" type="tel" placeholder="7XX XXX XXX" style={{ paddingLeft: 90 }} />
+                  <input className="input" type="tel" placeholder="7XX XXX XXX" style={{ paddingLeft: 90 }} value={phone} onChange={e => setPhone(e.target.value)} required />
                 </div>
               </div>
             ) : (
               <div>
                 <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Email Address</label>
-                <input className="input" type="email" placeholder="you@example.com" />
+                <input className="input" type="email" placeholder="you@example.com" value={phone} onChange={e => setPhone(e.target.value)} required />
               </div>
             )}
 
             <div>
               <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Password</label>
               <div style={{ position: "relative" }}>
-                <input className="input" type={showPassword ? "text" : "password"} placeholder="Enter your password" style={{ paddingRight: 48 }} />
+                <input className="input" type={showPassword ? "text" : "password"} placeholder="Enter your password" style={{ paddingRight: 48 }} value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
