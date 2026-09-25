@@ -6,11 +6,13 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { EmailModule } from '../email/email.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { CoinModule } from '../coin/coin.module';
 
 @Module({
   imports: [
     PrismaModule,
     EmailModule,
+    CoinModule,
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'kenyadates_secret_key_2026',

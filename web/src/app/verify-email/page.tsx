@@ -10,7 +10,7 @@ export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
   
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("Verifying your email address...");
@@ -39,12 +39,14 @@ export default function VerifyEmailPage() {
         setStatus("success");
         setMessage("Your email has been successfully verified! You can now access all features.");
         
-        // Auto-redirect to app if they are logged in
-        if (isAuthenticated) {
-          setTimeout(() => {
-            router.push("/app");
-          }, 3000);
+        // Auto-login with the returned token
+        if (data.token && data.user) {
+           login(data.token, data.user);
         }
+        
+        setTimeout(() => {
+          router.push("/app");
+        }, 3000);
       } catch (err: any) {
         setStatus("error");
         setMessage(err.message || "An unexpected error occurred.");

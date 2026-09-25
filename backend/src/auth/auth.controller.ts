@@ -15,9 +15,13 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login with Phone Number and Password' })
-  login(@Body() body: { phoneNumber: string; password: string }) {
-    return this.authService.login(body.phoneNumber, body.password);
+  @ApiOperation({ summary: 'Login with Phone Number or Email' })
+  login(@Body() body: { phoneNumber?: string; email?: string; password: string }) {
+    const identifier = body.email || body.phoneNumber;
+    if (!identifier) {
+      throw new Error('Either phone number or email is required');
+    }
+    return this.authService.login(identifier, body.password);
   }
 
   @Post('verify-otp')

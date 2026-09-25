@@ -29,16 +29,16 @@ enum TransactionStatus {
 
 model User {
   id                     String             @id @default(uuid())
-  phoneNumber            String             @unique
-  email                  String?            @unique
+  phoneNumber            String?            @unique
+  email                  String             @unique
   emailVerified          Boolean            @default(false)
   emailVerificationToken String?            @unique
   passwordHash           String
   role                   Role               @default(USER)
   verificationStatus     VerificationStatus @default(UNVERIFIED)
-  coinBalance            Int                @default(50)
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
+  wallet                 CoinWallet?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   profile            Profile?
   sentLikes          Like[]             @relation("SentLikes")
@@ -125,6 +125,78 @@ model Transaction {
   status         TransactionStatus @default(PENDING)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+}
+
+enum CoinTransactionType {
+  PURCHASE
+  WELCOME
+  BONUS
+  GIFT
+  BOOST
+  CALL
+  REFUND
+}
+
+enum CallType {
+  AUDIO
+  VIDEO
+}
+
+model CoinWallet {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Int      @default(0)
+  transactions CoinTransaction[]
+}
+
+model CoinTransaction {
+  id          String               @id @default(uuid())
+  walletId    String
+  wallet      CoinWallet           @relation(fields: [walletId], references: [id])
+  type        CoinTransactionType
+  amount      Int
+  description String?
+  createdAt   DateTime             @default(now())
+}
+
+model CoinPackage {
+  id           String @id @default(uuid())
+  name         String @unique
+  priceKsh     Float
+  coins        Int
+  bonusCoins   Int @default(0)
+}
+
+model MembershipPlan {
+  id            String @id @default(uuid())
+  name          String @unique
+  priceKsh      Float
+  monthlyCoins  Int
+  benefits      Json?
+}
+
+model Gift {
+  id        String @id @default(uuid())
+  name      String @unique
+  coinCost  Int
+}
+
+model Boost {
+  id             String @id @default(uuid())
+  name           String @unique
+  coinCost       Int
+  durationMinutes Int
+}
+
+model CallLog {
+  id        String   @id @default(uuid())
+  callerId  String
+  receiverId String
+  type      CallType
+  minutes   Int
+  coinCost  Int
+  createdAt DateTime @default(now())
 }
 
 model Report {
