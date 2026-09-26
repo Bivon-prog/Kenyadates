@@ -3,26 +3,26 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, Heart, MessageCircle, Wallet, User } from "lucide-react";
+import { Flame, Compass, Heart, MessageCircle, User } from "lucide-react";
 
 const NAV_ITEMS = [
-  { href: "/discover", icon: Flame, label: "Discover" },
-  { href: "/matches", icon: Heart, label: "Matches" },
+  { href: "/discover", icon: Flame, label: "Swipe" },
+  { href: "/explore", icon: Compass, label: "Explore" },
+  { href: "/likes", icon: Heart, label: "Likes" },
   { href: "/matches", icon: MessageCircle, label: "Chat" },
-  { href: "/wallet", icon: Wallet, label: "Wallet" },
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
 
-  // Don't show on auth pages or call pages
+  // Don't show on landing page, auth pages, or call pages
   const hiddenRoutes = ["/login", "/register", "/verify-email", "/verify", "/call"];
-  if (hiddenRoutes.some((r) => pathname.startsWith(r))) return null;
+  if (pathname === "/" || hiddenRoutes.some((r) => pathname.startsWith(r))) return null;
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 safe-area-pb">
-      <div className="flex items-center justify-around max-w-lg mx-auto px-2 py-2">
+      <div className="flex items-center justify-between max-w-lg mx-auto px-6 py-3">
         {NAV_ITEMS.map(({ href, icon: Icon, label }) => {
           const isActive = pathname === href || (href !== "/" && pathname.startsWith(href));
           return (

@@ -6,12 +6,12 @@ import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video,
 import InstallPrompt from "@/components/InstallPrompt";
 
 const HERO_PROFILES = [
-  { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600", emoji: "👩🏾" },
-  { name: "James", age: 29, city: "Mombasa", verified: true, online: false, bg: "from-purple-500 to-indigo-600", emoji: "👨🏾" },
-  { name: "Fatuma", age: 24, city: "Kisumu", verified: true, online: true, bg: "from-amber-500 to-orange-600", emoji: "👩🏿" },
-  { name: "Brian", age: 31, city: "Kampala", verified: false, online: true, bg: "from-teal-500 to-cyan-600", emoji: "👨🏽" },
-  { name: "Grace", age: 27, city: "Dar es Salaam", verified: true, online: false, bg: "from-rose-500 to-pink-600", emoji: "👩🏾" },
-  { name: "Kevin", age: 28, city: "Eldoret", verified: true, online: true, bg: "from-blue-500 to-violet-600", emoji: "👨🏾" },
+  { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600" },
+  { name: "James", age: 29, city: "Mombasa", verified: true, online: false, bg: "from-purple-500 to-indigo-600" },
+  { name: "Fatuma", age: 24, city: "Kisumu", verified: true, online: true, bg: "from-amber-500 to-orange-600" },
+  { name: "Brian", age: 31, city: "Kampala", verified: false, online: true, bg: "from-teal-500 to-cyan-600" },
+  { name: "Grace", age: 27, city: "Dar es Salaam", verified: true, online: false, bg: "from-rose-500 to-pink-600" },
+  { name: "Kevin", age: 28, city: "Eldoret", verified: true, online: true, bg: "from-blue-500 to-violet-600" },
 ];
 
 const FEATURES = [
@@ -94,44 +94,44 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 80, position: "relative", overflow: "hidden" }}>
+      <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
         {/* Background glow */}
         <div style={{ position: "absolute", top: "20%", left: "10%", width: 400, height: 400, background: "rgba(232,51,109,0.12)", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", top: "40%", right: "5%", width: 300, height: 300, background: "rgba(108,99,255,0.1)", borderRadius: "50%", filter: "blur(80px)", pointerEvents: "none" }} />
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center", width: "100%" }}>
+        <div className="max-w-7xl mx-auto px-6 py-10 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full z-10">
           {/* Left */}
-          <div style={{ animationDelay: "0.1s" }} className="animate-fade-in">
-            <div className="badge badge-pink" style={{ marginBottom: 24, width: "fit-content" }}>
+          <div style={{ animationDelay: "0.1s" }} className="animate-fade-in text-center lg:text-left">
+            <div className="badge badge-pink mx-auto lg:mx-0 mb-6 w-fit">
               <Sparkles size={12} /> East Africa&apos;s Dating Platform
             </div>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(42px,5vw,68px)", fontWeight: 700, lineHeight: 1.1, marginBottom: 24 }}>
+            <h1 className="font-playfair text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-tight mb-6 text-white">
               Real People.<br />
-              <span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Real Connections.</span>
+              <span className="bg-gradient-to-r from-brand-orange to-brand-peach bg-clip-text text-transparent">Real Connections.</span>
             </h1>
-            <p style={{ fontSize: 18, color: "var(--text-secondary)", lineHeight: 1.7, marginBottom: 40, maxWidth: 480 }}>
+            <p className="text-lg text-white/70 leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
               Meet verified singles from Kenya, Uganda, Tanzania and across East Africa. Face-verified profiles. Real conversations. Genuine relationships.
             </p>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 48 }}>
-              <Link href="/register" className="btn-primary" style={{ fontSize: 16, padding: "16px 36px" }}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
+              <Link href="/register" className="btn-primary text-base px-8 py-4 flex items-center justify-center gap-2">
                 Start For Free <ChevronRight size={18} />
               </Link>
-              <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 16, padding: "16px 36px" }}>
+              <a href="#how-it-works" className="btn-secondary text-base px-8 py-4 flex items-center justify-center">
                 See How It Works
               </a>
             </div>
-            <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
+            <div className="flex gap-8 justify-center lg:justify-start flex-wrap">
               {[["50K+", "Members"], ["98%", "Verified"], ["4.9★", "Rating"]].map(([val, label]) => (
                 <div key={label}>
-                  <div style={{ fontSize: 24, fontWeight: 800, background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{val}</div>
-                  <div style={{ fontSize: 13, color: "var(--text-muted)", marginTop: 2 }}>{label}</div>
+                  <div className="text-3xl font-black bg-gradient-to-r from-brand-orange to-brand-peach bg-clip-text text-transparent">{val}</div>
+                  <div className="text-sm text-white/50 mt-1 font-medium tracking-wide uppercase">{label}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Right — Profile cards grid */}
-          <div style={{ position: "relative", height: 520 }} className="animate-fade-in">
+          <div className="relative h-[400px] lg:h-[520px] w-full max-w-[400px] mx-auto lg:mr-0 animate-fade-in">
             {HERO_PROFILES.map((p, i) => {
               const positions = [
                 { top: "0%", left: "10%", rotate: "-3deg", scale: 1 },
@@ -153,15 +153,10 @@ export default function LandingPage() {
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(0deg) scale(1.05)`; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`; }}
                 >
-                  <div style={{
-                    width: "100%", aspectRatio: "1", borderRadius: "var(--radius-md)",
-                    background: `linear-gradient(135deg, ${p.bg.replace("from-", "").replace(" to-", ", ")})`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 40, marginBottom: 10
-                  }}
-                    className={`bg-gradient-to-br ${p.bg}`}
-                  >
-                    {p.emoji}
+                  <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${p.bg} flex items-center justify-center mb-3 relative overflow-hidden group`}>
+                    <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Heart className="text-white w-8 h-8 fill-white/50" />
+                    </div>
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{p.name}, {p.age}</div>
                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{p.city}</div>
