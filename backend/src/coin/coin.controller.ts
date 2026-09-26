@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Req, UseGuards } from '@nestjs/common';
 import { CoinService } from './coin.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { CoinTransactionType } from '@prisma/client';
 
 @Controller('wallet')
-@UseGuards(JwtAuthGuard)
+@UseGuards(AuthGuard('jwt'))
 export class CoinController {
   constructor(private readonly coinService: CoinService) {}
 

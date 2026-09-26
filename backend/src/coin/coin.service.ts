@@ -10,15 +10,11 @@ export class CoinService {
    * Ensure the user has a wallet; if not, create one.
    */
   private async ensureWallet(userId: string) {
-    let wallet = await this.prisma.coinWallet.findUnique({
+    return this.prisma.coinWallet.upsert({
       where: { userId },
+      update: {},
+      create: { userId, balance: 0 },
     });
-    if (!wallet) {
-      wallet = await this.prisma.coinWallet.create({
-        data: { userId, balance: 0 },
-      });
-    }
-    return wallet;
   }
 
   /** Grant welcome coins after email verification */

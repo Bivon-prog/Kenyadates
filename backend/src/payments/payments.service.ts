@@ -65,10 +65,14 @@ export class PaymentsService {
         },
       });
 
-      await this.prisma.user.update({
-        where: { id: transaction.userId },
-        data: {
-          coinBalance: { increment: transaction.coinsPurchased },
+      await this.prisma.coinWallet.upsert({
+        where: { userId: transaction.userId },
+        create: {
+          userId: transaction.userId,
+          balance: transaction.coinsPurchased,
+        },
+        update: {
+          balance: { increment: transaction.coinsPurchased },
         },
       });
 
