@@ -3,40 +3,42 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Bell, Search, Star, MapPin, Crown, Coins,
-  Shield, Heart, Zap, ChevronRight, Flame, Users
+  Shield, Heart, Zap, ChevronRight, Flame, Users, CheckCircle
 } from "lucide-react";
 
 const PROFILES = [
-  { id: 1, name: "Amina", age: 26, city: "Nairobi", distance: "2 km", verified: true, online: true, premium: "gold", interests: ["Travel ✈️", "Fitness 💪", "Music 🎵"], bio: "Nairobi girl who loves adventures and good food 🌍", bg: "from-pink-500 to-rose-500", match: 94 },
-  { id: 2, name: "James", age: 29, city: "Mombasa", distance: "350 km", verified: true, online: false, premium: "platinum", interests: ["Sports ⚽", "Business 📈", "Cooking 👨‍🍳"], bio: "Entrepreneur from Mombasa. Let's build something great.", bg: "from-blue-500 to-indigo-500", match: 87 },
-  { id: 3, name: "Grace", age: 24, city: "Kisumu", distance: "350 km", verified: true, online: true, premium: null, interests: ["Dancing 💃", "Art 🎨", "Reading 📚"], bio: "Lake Victoria vibes. Good conversations only.", bg: "from-purple-500 to-violet-500", match: 91 },
-  { id: 4, name: "Kevin", age: 31, city: "Eldoret", distance: "310 km", verified: false, online: true, premium: "gold", interests: ["Fitness 💪", "Tech 💻", "Nature 🌿"], bio: "Runner, coder, outdoors lover.", bg: "from-teal-500 to-cyan-500", match: 78 },
-  { id: 5, name: "Fatuma", age: 27, city: "Nairobi", distance: "5 km", verified: true, online: true, premium: "diamond", interests: ["Fashion 👗", "Photography 📸", "Travel ✈️"], bio: "Digital creative. Passionate about Swahili culture.", bg: "from-amber-500 to-orange-500", match: 96 },
-  { id: 6, name: "Wanjiru", age: 25, city: "Nakuru", distance: "160 km", verified: true, online: false, premium: null, interests: ["Music 🎵", "Food 🍽️", "Nature 🌿"], bio: "Nature lover. Bookworm. Foodie.", bg: "from-rose-500 to-pink-500", match: 82 },
+  { id: 1, name: "Amina", age: 26, city: "Nairobi", distance: "2 km", verified: true, online: true, premium: "gold", interests: ["Travel", "Fitness", "Music"], bg: "#C2185B" },
+  { id: 2, name: "James", age: 29, city: "Mombasa", distance: "350 km", verified: true, online: false, premium: "platinum", interests: ["Sports", "Business", "Cooking"], bg: "#1565C0" },
+  { id: 3, name: "Grace", age: 24, city: "Kisumu", distance: "350 km", verified: true, online: true, premium: null, interests: ["Dancing", "Art", "Reading"], bg: "#4527A0" },
+  { id: 4, name: "Kevin", age: 31, city: "Eldoret", distance: "310 km", verified: false, online: true, premium: "gold", interests: ["Fitness", "Tech", "Nature"], bg: "#00695C" },
+  { id: 5, name: "Fatuma", age: 27, city: "Nairobi", distance: "5 km", verified: true, online: true, premium: "diamond", interests: ["Fashion", "Photography", "Travel"], bg: "#E65100" },
+  { id: 6, name: "Wanjiru", age: 25, city: "Nakuru", distance: "160 km", verified: true, online: false, premium: null, interests: ["Music", "Food", "Nature"], bg: "#AD1457" },
 ];
 
-const SECTIONS = [
-  { label: "Recommended", icon: "✨" },
-  { label: "New Members", icon: "🆕" },
-  { label: "Online Now", icon: "🟢" },
-  { label: "Near You", icon: "📍" },
-  { label: "Popular", icon: "🔥" },
-  { label: "Verified", icon: "✅" },
-];
+const SECTIONS = ["Recommended", "New Members", "Online Now", "Near You", "Popular", "Verified"];
 
 const PREMIUM_COLORS: Record<string, string> = {
-  gold: "#F5C542",
-  platinum: "#E5E4E2",
-  diamond: "#A78BFA",
+  gold: "#F5C542", platinum: "#9E9E9E", diamond: "#A78BFA",
 };
 
-function Avatar({ bg, name, size = 80 }: { bg: string; name: string; size?: number }) {
+// Clean initial-based avatar — no gradients, just solid colour + letter
+function Avatar({ name, photo, size = 80, colour }: { name: string; photo?: string; size?: number; colour: string }) {
+  if (photo && !photo.startsWith("gradient:")) {
+    return (
+      <img
+        src={photo}
+        className="rounded-full object-cover flex-shrink-0"
+        style={{ width: size, height: size }}
+        alt={name}
+      />
+    );
+  }
   return (
     <div
-      className={`rounded-full bg-gradient-to-br ${bg} flex items-center justify-center font-bold text-white flex-shrink-0`}
-      style={{ width: size, height: size, fontSize: size * 0.4 }}
+      className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
+      style={{ width: size, height: size, background: colour, fontSize: size * 0.38 }}
     >
-      {name[0]}
+      {name[0]?.toUpperCase()}
     </div>
   );
 }
@@ -45,65 +47,57 @@ function ProfileCard({ p, compact = false }: { p: typeof PROFILES[0]; compact?: 
   const [liked, setLiked] = useState(false);
   return (
     <div
-      className="card overflow-hidden transition-all duration-300 cursor-pointer group"
-      onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)")}
-      onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)")}
+      className="rounded-2xl overflow-hidden cursor-pointer bg-[#111118] border border-white/6 hover:border-white/12 transition-all duration-200 hover:-translate-y-0.5"
     >
-      {/* Photo area */}
       <div
         className="relative overflow-hidden flex items-center justify-center"
-        style={{ aspectRatio: compact ? "4/3" : "3/4", background: "var(--bg-surface)" }}
+        style={{ aspectRatio: compact ? "4/3" : "3/4" }}
       >
-        <Avatar bg={p.bg} name={p.name} size={compact ? 60 : 80} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent" />
+        {/* Solid colour background — not gradient */}
+        <div className="absolute inset-0" style={{ backgroundColor: p.bg, opacity: 0.9 }} />
+        <span
+          className="relative z-10 font-black text-white select-none"
+          style={{ fontSize: compact ? 48 : 64, opacity: 0.25 }}
+        >
+          {p.name[0]}
+        </span>
 
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex gap-1.5">
+        {/* Overlay gradient for text legibility only */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/10" />
+
+        {/* Verified + premium badges */}
+        <div className="absolute top-2 left-2 flex gap-1.5 z-10">
           {p.verified && (
-            <span className="badge badge-success" style={{ fontSize: 10, padding: "2px 7px" }}>
-              <Shield size={8} /> Verified
+            <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-black/60 text-blue-400 text-[10px] font-semibold">
+              <CheckCircle size={9} className="fill-blue-400/20" /> ID
             </span>
           )}
           {p.premium && (
-            <span
-              className="badge"
-              style={{ fontSize: 10, padding: "2px 7px", background: `${PREMIUM_COLORS[p.premium]}20`, color: PREMIUM_COLORS[p.premium], border: `1px solid ${PREMIUM_COLORS[p.premium]}40` }}
-            >
-              <Crown size={8} style={{ display: "inline", marginRight: 2 }} />
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-black/60"
+              style={{ color: PREMIUM_COLORS[p.premium] }}>
               {p.premium.charAt(0).toUpperCase() + p.premium.slice(1)}
             </span>
           )}
         </div>
 
-        {/* Match % */}
-        <div
-          className="absolute top-2 right-2 w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: "rgba(232,51,109,0.88)" }}
-        >
-          <span style={{ fontSize: 10, fontWeight: 800, color: "white" }}>{p.match}%</span>
-        </div>
-
-        {/* Online dot */}
+        {/* Online indicator */}
         {p.online && (
-          <div className="absolute" style={{ bottom: compact ? 76 : 96, left: 12 }}>
-            <span className="online-dot" style={{ display: "inline-block" }} />
-          </div>
+          <span className="absolute top-2 right-2 z-10 w-2 h-2 rounded-full bg-green-400 ring-2 ring-black/60" />
         )}
 
         {/* Info */}
-        <div className="absolute bottom-0 inset-x-0 p-3">
-          <div className="flex items-baseline gap-1.5 mb-1">
-            <span style={{ fontSize: compact ? 15 : 17, fontWeight: 800 }}>{p.name},</span>
-            <span style={{ fontSize: compact ? 13 : 15, fontWeight: 500, color: "rgba(255,255,255,0.8)" }}>{p.age}</span>
+        <div className="absolute bottom-0 inset-x-0 p-3 z-10">
+          <p className="text-white font-bold text-sm leading-none mb-0.5">
+            {p.name}, {p.age}
+          </p>
+          <div className="flex items-center gap-1">
+            <MapPin size={9} className="text-white/50" />
+            <span className="text-white/60 text-[11px]">{p.city}</span>
           </div>
-          <div className="flex items-center gap-1 mb-1.5">
-            <MapPin size={10} color="var(--text-muted)" />
-            <span style={{ fontSize: 11, color: "var(--text-muted)" }}>{p.city} · {p.distance}</span>
-          </div>
-          {!compact && (
-            <div className="flex gap-1 flex-wrap">
+          {!compact && p.interests.length > 0 && (
+            <div className="flex gap-1 flex-wrap mt-1.5">
               {p.interests.slice(0, 2).map(i => (
-                <span key={i} className="badge badge-pink" style={{ fontSize: 10, padding: "2px 7px" }}>{i}</span>
+                <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-white/15 text-white/80">{i}</span>
               ))}
             </div>
           )}
@@ -112,14 +106,10 @@ function ProfileCard({ p, compact = false }: { p: typeof PROFILES[0]; compact?: 
         {/* Like button */}
         <button
           onClick={e => { e.stopPropagation(); setLiked(!liked); }}
-          className="absolute bottom-2.5 right-2.5 w-9 h-9 rounded-full flex items-center justify-center transition-all"
-          style={{
-            background: liked ? "var(--gradient-primary)" : "rgba(255,255,255,0.15)",
-            backdropFilter: "blur(8px)",
-            border: "none",
-          }}
+          className="absolute bottom-2.5 right-2.5 w-8 h-8 rounded-full flex items-center justify-center z-10 transition-all"
+          style={{ background: liked ? "#E8336D" : "rgba(0,0,0,0.5)" }}
         >
-          <Heart size={15} fill={liked ? "white" : "none"} color="white" />
+          <Heart size={14} fill={liked ? "white" : "none"} color="white" />
         </button>
       </div>
     </div>
@@ -130,244 +120,191 @@ export default function AppHomePage() {
   const [activeSection, setActiveSection] = useState("Recommended");
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
-  const [realProfiles, setRealProfiles] = useState<any[]>([]);
   const [myCoins, setMyCoins] = useState(0);
   const [myName, setMyName] = useState("");
+  const [realProfiles, setRealProfiles] = useState<any[]>([]);
 
-  // Load real data on mount
   useEffect(() => {
     const token = localStorage.getItem("kd_token");
     if (!token) return;
-
-    // Load real recommendations
     fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/discovery/recommendations`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(r => r.ok ? r.json() : []).then(d => {
       if (Array.isArray(d) && d.length > 0) setRealProfiles(d);
     }).catch(() => {});
-
-    // Load wallet balance
     fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/wallet/balance`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(r => r.ok ? r.json() : null).then(d => {
       if (d?.balance !== undefined) setMyCoins(d.balance);
     }).catch(() => {});
-
-    // Load user profile
     const stored = localStorage.getItem("kd_user");
     if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setMyName(u.profile?.displayName?.split(" ")[0] ?? "");
-      } catch {}
+      try { setMyName(JSON.parse(stored).profile?.displayName?.split(" ")[0] ?? ""); } catch {}
     }
   }, []);
 
-  // Use real profiles from API when available, fall back to mock
   const displayProfiles = realProfiles.length > 0
     ? realProfiles.map((rp, i) => ({
-        id:       i + 100,
-        name:     rp.displayName,
-        age:      rp.age,
-        city:     rp.city,
-        distance: rp.city ? `${rp.city}` : "Kenya",
+        id: i + 100,
+        name: rp.displayName,
+        age: rp.age,
+        city: rp.city,
+        distance: rp.city ?? "Kenya",
         verified: rp.user?.verificationStatus === "VERIFIED",
-        online:   rp.isOnline ?? false,
-        premium:  null as string | null,
-        interests: rp.interests ?? [],
-        bio:      rp.bio ?? "",
-        bg:       ["from-pink-500 to-rose-500","from-blue-500 to-indigo-500","from-purple-500 to-violet-500","from-teal-500 to-cyan-500","from-amber-500 to-orange-500"][i % 5],
-        match:    Math.floor(70 + Math.random() * 28),
+        online: rp.isOnline ?? false,
+        premium: null as string | null,
+        interests: (rp.interests ?? []).slice(0, 3).map((x: string) => x.replace(/\s*[^\w\s].*/, "")),
+        bg: ["#C2185B","#1565C0","#4527A0","#00695C","#E65100","#AD1457"][i % 6],
       }))
     : PROFILES;
 
   const filtered = search
     ? displayProfiles.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.city.toLowerCase().includes(search.toLowerCase())
-      )
+        p.city.toLowerCase().includes(search.toLowerCase()))
     : displayProfiles;
 
   return (
-    /* On desktop the side nav is rendered by BottomNav (72px wide).
-       The layout wrapper in layout.tsx already adds md:pl-[72px].
-       Here we just handle the content layout. */
-    <div className="min-h-screen bg-[#0D0D0D]">
+    <div className="min-h-screen bg-[#0A0A0F]">
 
-      {/* ── Desktop sidebar (extra nav for /app only) ── */}
-      <aside className="hidden lg:flex flex-col fixed left-[72px] top-0 bottom-0 w-56 border-r border-white/8 bg-[#0D0D10] py-6 px-3 z-40">
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex flex-col fixed left-[72px] top-0 bottom-0 w-52 border-r border-white/6 bg-[#0A0A0F] py-6 px-3 z-40">
         <Link href="/" className="flex items-center gap-2.5 px-2 mb-8 no-underline">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--gradient-primary)" }}>
-            <Heart size={16} fill="white" color="white" />
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#E8336D]">
+            <Heart size={14} fill="white" color="white" />
           </div>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "white" }}>
-            Kenya<span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>dates</span>
-          </span>
+          <span className="text-white font-bold text-base">Kenyandates</span>
         </Link>
-
-        <nav className="flex flex-col gap-1 flex-1">
+        <nav className="flex flex-col gap-0.5 flex-1">
           {[
             { icon: Flame, label: "Discover", href: "/discover" },
             { icon: Users, label: "Explore", href: "/explore" },
             { icon: Heart, label: "Likes", href: "/likes" },
             { icon: Bell, label: "Matches", href: "/matches" },
           ].map(item => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/5 transition-all no-underline"
-            >
-              <item.icon size={17} />
+            <Link key={item.label} href={item.href}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-white/45 hover:text-white hover:bg-white/5 transition-all no-underline">
+              <item.icon size={16} />
               {item.label}
             </Link>
           ))}
         </nav>
-
-        {/* Coins */}
-        <div className="rounded-xl p-3 mb-2" style={{ background: "rgba(245,197,66,0.07)", border: "1px solid rgba(245,197,66,0.18)" }}>
-          <div className="flex items-center gap-2 mb-1.5">
-            <Coins size={14} color="var(--accent-gold)" />
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-gold)" }}>My Coins</span>
-          </div>
-          <div className="text-xl font-black text-white mb-2">{myCoins > 0 ? myCoins.toLocaleString() : "150"} 🪙</div>
-          <Link href="/wallet" className="btn-gold block text-center no-underline" style={{ fontSize: 11, padding: "7px 12px" }}>Buy Coins</Link>
+        <div className="rounded-xl p-3 mb-2 bg-[#111118] border border-white/6">
+          <p className="text-white/40 text-xs mb-1">Coins</p>
+          <p className="text-white font-bold text-lg">{myCoins > 0 ? myCoins.toLocaleString() : 0}</p>
+          <Link href="/wallet" className="block text-center mt-2 py-1.5 rounded-lg bg-[#E8336D] text-white text-xs font-semibold no-underline hover:opacity-90 transition-opacity">
+            Buy Coins
+          </Link>
         </div>
-
-        {/* Upgrade */}
-        <Link href="/wallet" className="rounded-xl p-3 no-underline block" style={{ background: "var(--gradient-primary)" }}>
-          <div className="flex items-center gap-2 mb-0.5">
-            <Crown size={14} color="white" />
-            <span style={{ fontSize: 12, fontWeight: 700, color: "white" }}>Upgrade to Gold</span>
-          </div>
-          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)" }}>Unlimited likes & more</span>
+        <Link href="/wallet" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#E8336D] no-underline">
+          <Crown size={13} color="white" />
+          <span className="text-white text-xs font-semibold">Upgrade to Gold</span>
         </Link>
       </aside>
 
-      {/* ── Main content ── */}
-      <main className="lg:pl-56 min-h-screen pb-24 md:pb-6">
-        <div className="max-w-4xl mx-auto px-4 md:px-8 py-6">
+      <main className="lg:pl-52 min-h-screen pb-24 md:pb-6">
+        <div className="max-w-4xl mx-auto px-4 md:px-6 py-5">
 
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <h1 className="text-xl font-black text-white mb-0.5">
-                {myName ? `Hey ${myName} 👋` : "Good day 👋"}
+              <h1 className="text-lg font-bold text-white">
+                {myName ? `Hey ${myName}` : "Hey there"} 👋
               </h1>
-              <p className="text-white/40 text-sm">Start swiping to find your match</p>
+              <p className="text-white/35 text-sm">Find someone worth meeting</p>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => setShowSearch(!showSearch)}
-                className="w-10 h-10 rounded-full border border-white/10 bg-white/4 flex items-center justify-center hover:bg-white/8 transition-colors"
-              >
-                <Search size={16} color="var(--text-secondary)" />
+              <button onClick={() => setShowSearch(!showSearch)}
+                className="w-9 h-9 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 transition-colors">
+                <Search size={15} className="text-white/50" />
               </button>
-              <button className="relative w-10 h-10 rounded-full border border-white/10 bg-white/4 flex items-center justify-center hover:bg-white/8 transition-colors">
-                <Bell size={16} color="var(--text-secondary)" />
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#E8336D] border border-[#0D0D0D]" />
+              <button className="w-9 h-9 rounded-xl bg-white/5 border border-white/8 flex items-center justify-center hover:bg-white/8 transition-colors relative">
+                <Bell size={15} className="text-white/50" />
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#E8336D]" />
               </button>
             </div>
           </div>
 
-          {/* Search */}
           {showSearch && (
-            <div className="mb-5 animate-slide-up">
-              <input
-                className="input"
-                placeholder="Search by name, city, interests…"
-                autoFocus
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
+            <div className="mb-4">
+              <input className="input" placeholder="Search by name or city…" autoFocus
+                value={search} onChange={e => setSearch(e.target.value)} />
             </div>
           )}
 
-          {/* Section tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide">
+          {/* Section tabs — clean text, no emoji */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 mb-5 scrollbar-hide">
             {SECTIONS.map(s => (
-              <button
-                key={s.label}
-                onClick={() => setActiveSection(s.label)}
-                className="flex-shrink-0 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all"
+              <button key={s} onClick={() => setActiveSection(s)}
+                className="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
                 style={{
-                  borderColor: activeSection === s.label ? "var(--accent-primary)" : "var(--border)",
-                  background: activeSection === s.label ? "rgba(232,51,109,0.1)" : "var(--bg-surface)",
-                  color: activeSection === s.label ? "var(--accent-secondary)" : "var(--text-secondary)",
+                  background: activeSection === s ? "#E8336D" : "rgba(255,255,255,0.05)",
+                  color: activeSection === s ? "white" : "rgba(255,255,255,0.4)",
                   whiteSpace: "nowrap",
-                }}
-              >
-                {s.icon} {s.label}
+                }}>
+                {s}
               </button>
             ))}
           </div>
 
-          {/* Recommended grid */}
+          {/* Main grid */}
           <section className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-white">✨ Recommended</h2>
-              <Link href="/discover" className="text-xs font-semibold flex items-center gap-0.5 no-underline" style={{ color: "var(--accent-secondary)" }}>
-                See all <ChevronRight size={13} />
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-white/70">Recommended for you</h2>
+              <Link href="/discover" className="text-xs font-semibold text-[#E8336D] no-underline flex items-center gap-0.5">
+                See all <ChevronRight size={12} />
               </Link>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
               {filtered.map(p => <ProfileCard key={p.id} p={p} />)}
             </div>
           </section>
 
           {/* Online now */}
           <section className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-white">🟢 Online Now</h2>
-              <Link href="/discover" className="text-xs font-semibold no-underline" style={{ color: "var(--accent-secondary)" }}>See all</Link>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-white/70">
+                Online now
+                <span className="ml-2 inline-block w-1.5 h-1.5 rounded-full bg-green-400 relative top-[-1px]" />
+              </h2>
+              <Link href="/discover" className="text-xs font-semibold text-[#E8336D] no-underline">See all</Link>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide">
-              {PROFILES.filter(p => p.online).map(p => (
-                <Link key={p.id} href="/discover" className="flex-shrink-0 flex flex-col items-center gap-1.5 no-underline">
+            <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+              {displayProfiles.filter(p => p.online).map(p => (
+                <Link key={p.id} href="/discover" className="flex-shrink-0 flex flex-col items-center gap-1 no-underline">
                   <div className="relative">
-                    <div className="p-0.5 rounded-full" style={{ background: "var(--gradient-primary)" }}>
-                      <div className="p-0.5 rounded-full bg-[#0D0D0D]">
-                        <Avatar bg={p.bg} name={p.name} size={52} />
-                      </div>
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-lg"
+                      style={{ background: p.bg }}>
+                      {p.name[0]}
                     </div>
-                    <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-400 border-2 border-[#0D0D0D] rounded-full" />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-[#0A0A0F] rounded-full" />
                   </div>
-                  <span className="text-[11px] text-white/60 font-medium">{p.name}</span>
+                  <span className="text-[11px] text-white/50">{p.name}</span>
                 </Link>
               ))}
             </div>
           </section>
 
-          {/* Super likes banner */}
-          <div
-            className="rounded-2xl p-4 mb-8 flex items-center justify-between gap-4 flex-wrap"
-            style={{ background: "rgba(232,51,109,0.07)", border: "1px solid rgba(232,51,109,0.2)" }}
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "var(--gradient-primary)" }}>
-                <Zap size={20} color="white" />
-              </div>
-              <div>
-                <p className="text-white font-bold text-sm">2 Super Likes left today</p>
-                <p className="text-white/40 text-xs">Stand out — 3× more responses</p>
-              </div>
+          {/* Super likes prompt — minimal */}
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-[#111118] border border-white/6 mb-8">
+            <div>
+              <p className="text-white text-sm font-semibold">2 Super Likes remaining</p>
+              <p className="text-white/35 text-xs mt-0.5">Super Likes get 3× more replies</p>
             </div>
-            <Link
-              href="/discover"
-              className="btn-primary no-underline"
-              style={{ padding: "9px 18px", fontSize: 12 }}
-            >
-              Use Now <Star size={13} />
+            <Link href="/discover"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#E8336D] text-white text-xs font-semibold no-underline hover:opacity-90 transition-opacity">
+              <Star size={12} /> Use Now
             </Link>
           </div>
 
-          {/* New members compact */}
+          {/* New members */}
           <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-white">🆕 New Members</h2>
-              <Link href="/discover" className="text-xs font-semibold no-underline" style={{ color: "var(--accent-secondary)" }}>See all</Link>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-white/70">New members</h2>
+              <Link href="/discover" className="text-xs font-semibold text-[#E8336D] no-underline">See all</Link>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2.5">
-              {PROFILES.slice(2).map(p => <ProfileCard key={p.id} p={p} compact />)}
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+              {displayProfiles.slice(2).map(p => <ProfileCard key={p.id} p={p} compact />)}
             </div>
           </section>
         </div>

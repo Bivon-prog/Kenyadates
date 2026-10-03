@@ -84,13 +84,13 @@ export default function ExplorePage() {
           <h2 className="text-sm font-bold text-white/40 uppercase tracking-wider mb-4">Features</h2>
 
           {/* Get verified */}
-          <div className="flex items-center gap-4 bg-blue-500/8 border border-blue-500/20 rounded-2xl p-4 cursor-pointer hover:bg-blue-500/12 transition-colors">
-            <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-              <Shield className="w-6 h-6 text-blue-400 fill-blue-400/30" />
+          <div className="flex items-center gap-4 bg-blue-500/8 border border-blue-500/20 rounded-2xl p-4 cursor-pointer hover:bg-blue-500/10 transition-colors">
+            <div className="w-12 h-12 rounded-full bg-blue-500/15 flex items-center justify-center flex-shrink-0">
+              <Shield className="w-6 h-6 text-blue-400" />
             </div>
             <div>
               <h3 className="text-white font-bold">Get Verified</h3>
-              <p className="text-white/50 text-sm">Earn your ✅ badge + 50 free coins</p>
+              <p className="text-white/50 text-sm">Earn your verified badge + 50 free coins</p>
             </div>
           </div>
 

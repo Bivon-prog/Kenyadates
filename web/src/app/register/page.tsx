@@ -161,7 +161,6 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-        <div style={{ position: "fixed", top: "-10%", right: "-10%", width: 500, height: 500, background: "rgba(232,51,109,0.08)", borderRadius: "50%", filter: "blur(100px)" }} />
         <div className="glass animate-fade-in" style={{ width: "100%", maxWidth: 440, borderRadius: "var(--radius-xl)", padding: 48, textAlign: "center", position: "relative" }}>
           <div style={{ width: 80, height: 80, borderRadius: "50%", background: "linear-gradient(135deg, rgba(76,175,130,0.2), rgba(76,175,130,0.05))", border: "2px solid rgba(76,175,130,0.4)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 28px" }}>
             <Check size={36} color="#4caf82" />
@@ -205,9 +204,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "fixed", top: "-10%", right: "-10%", width: 500, height: 500, background: "rgba(232,51,109,0.08)", borderRadius: "50%", filter: "blur(100px)" }} />
-      <div style={{ position: "fixed", bottom: "-10%", left: "-10%", width: 400, height: 400, background: "rgba(108,99,255,0.06)", borderRadius: "50%", filter: "blur(80px)" }} />
+    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
 
       <div style={{ width: "100%", maxWidth: 480, position: "relative" }} className="animate-fade-in">
         {/* Logo */}

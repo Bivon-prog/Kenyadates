@@ -22,11 +22,11 @@ interface Profile {
 const SWIPE_THRESHOLD = 90;
 
 const MOCK_PROFILES: Profile[] = [
-  { id: "1", userId: "u1", displayName: "Amina", age: 24, city: "Nairobi", bio: "Love dancing and travelling 🌍", photos: ["gradient:from-pink-500 to-rose-600"], interests: ["Travel", "Music", "Food"], user: { verificationStatus: "VERIFIED" } },
-  { id: "2", userId: "u2", displayName: "Wanjiru", age: 26, city: "Mombasa", bio: "Beach lover, foodie & entrepreneur 🌊", photos: ["gradient:from-purple-500 to-indigo-600"], interests: ["Beach", "Business", "Cooking"], user: { verificationStatus: "VERIFIED" } },
-  { id: "3", userId: "u3", displayName: "Fatuma", age: 23, city: "Kisumu", bio: "Teacher by day, dancer by night 💃", photos: ["gradient:from-amber-500 to-orange-600"], interests: ["Dancing", "Education", "Art"], user: { verificationStatus: "UNVERIFIED" } },
-  { id: "4", userId: "u4", displayName: "Kemunto", age: 28, city: "Eldoret", bio: "Runner 🏃‍♀️ Nurse. Dog mom.", photos: ["gradient:from-teal-500 to-cyan-600"], interests: ["Fitness", "Health", "Pets"], user: { verificationStatus: "VERIFIED" } },
-  { id: "5", userId: "u5", displayName: "Njeri", age: 25, city: "Nakuru", bio: "Passionate about nature and wildlife 🦁", photos: ["gradient:from-blue-500 to-violet-600"], interests: ["Nature", "Photography", "Hiking"], user: { verificationStatus: "VERIFIED" } },
+  { id: "1", userId: "u1", displayName: "Amina", age: 24, city: "Nairobi", bio: "Love dancing and travelling. Looking for something genuine.", photos: ["solid:#C2185B"], interests: ["Travel", "Music", "Food"], user: { verificationStatus: "VERIFIED" } },
+  { id: "2", userId: "u2", displayName: "Wanjiru", age: 26, city: "Mombasa", bio: "Beach lover, foodie and entrepreneur.", photos: ["solid:#1565C0"], interests: ["Beach", "Business", "Cooking"], user: { verificationStatus: "VERIFIED" } },
+  { id: "3", userId: "u3", displayName: "Fatuma", age: 23, city: "Kisumu", bio: "Teacher by day, dancer by night.", photos: ["solid:#E65100"], interests: ["Dancing", "Education", "Art"], user: { verificationStatus: "UNVERIFIED" } },
+  { id: "4", userId: "u4", displayName: "Kemunto", age: 28, city: "Eldoret", bio: "Runner. Nurse. Dog mom.", photos: ["solid:#00695C"], interests: ["Fitness", "Health", "Pets"], user: { verificationStatus: "VERIFIED" } },
+  { id: "5", userId: "u5", displayName: "Njeri", age: 25, city: "Nakuru", bio: "Passionate about nature and wildlife.", photos: ["solid:#4527A0"], interests: ["Nature", "Photography", "Hiking"], user: { verificationStatus: "VERIFIED" } },
 ];
 
 export default function DiscoverPage() {
@@ -181,11 +181,10 @@ export default function DiscoverPage() {
 
         {/* Back card */}
         {nextProfile && (
-          <div
-            className="absolute inset-3 rounded-3xl overflow-hidden scale-[0.94] opacity-60 origin-bottom"
-            style={{ zIndex: 1 }}
-          >
-            {nextProfile.photos[0]?.startsWith("gradient:") ? (
+          <div className="absolute inset-3 rounded-3xl overflow-hidden scale-[0.94] opacity-60 origin-bottom" style={{ zIndex: 1 }}>
+            {nextProfile.photos[0]?.startsWith("solid:") ? (
+              <div className="w-full h-full" style={{ backgroundColor: nextProfile.photos[0].replace("solid:", "") }} />
+            ) : nextProfile.photos[0]?.startsWith("gradient:") ? (
               <div className={`w-full h-full bg-gradient-to-br ${nextProfile.photos[0].replace("gradient:", "")}`} />
             ) : (
               <img src={nextProfile.photos[0]} className="w-full h-full object-cover" alt="" />
@@ -214,6 +213,12 @@ export default function DiscoverPage() {
             {/* Photo */}
             {currentProfile.photos[0]?.startsWith("gradient:") ? (
               <div className={`w-full h-full bg-gradient-to-br ${currentProfile.photos[0].replace("gradient:", "")}`} />
+            ) : currentProfile.photos[0]?.startsWith("solid:") ? (
+              <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: currentProfile.photos[0].replace("solid:", "") }}>
+                <span className="text-white font-black select-none" style={{ fontSize: 120, opacity: 0.15 }}>
+                  {currentProfile.displayName[0]}
+                </span>
+              </div>
             ) : (
               <img src={currentProfile.photos[0]} className="w-full h-full object-cover" draggable={false} alt={currentProfile.displayName} />
             )}
@@ -332,14 +337,15 @@ export default function DiscoverPage() {
               You and <strong className="text-white">{showMatch.displayName}</strong> liked each other!
             </p>
 
-            {showMatch.photos[0]?.startsWith("gradient:") ? (
+            {showMatch.photos[0]?.startsWith("solid:") ? (
+              <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center border-4 border-[#E8336D] font-black text-white text-3xl"
+                style={{ backgroundColor: showMatch.photos[0].replace("solid:", "") }}>
+                {showMatch.displayName[0]}
+              </div>
+            ) : showMatch.photos[0]?.startsWith("gradient:") ? (
               <div className={`w-24 h-24 rounded-full mx-auto mb-6 bg-gradient-to-br ${showMatch.photos[0].replace("gradient:", "")} border-4 border-[#E8336D]`} />
             ) : (
-              <img
-                src={showMatch.photos[0]}
-                className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-[#E8336D] object-cover"
-                alt=""
-              />
+              <img src={showMatch.photos[0]} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-[#E8336D] object-cover" alt="" />
             )}
 
             <div className="flex gap-3">

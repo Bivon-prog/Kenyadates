@@ -14,29 +14,36 @@ interface Match {
 }
 
 const MOCK_MATCHES: Match[] = [
-  { id: "m1", user1: { id: "me", profile: null }, user2: { id: "u1", profile: { displayName: "Amina", photos: ["gradient:from-pink-500 to-rose-500"], city: "Nairobi" } }, messages: [{ content: "Hey, how are you? 😊", createdAt: new Date(Date.now() - 120000).toISOString() }] },
-  { id: "m2", user1: { id: "me", profile: null }, user2: { id: "u2", profile: { displayName: "Wanjiru", photos: ["gradient:from-purple-500 to-indigo-500"], city: "Mombasa" } }, messages: [{ content: "Would love to catch up sometime!", createdAt: new Date(Date.now() - 3600000 * 3).toISOString() }] },
-  { id: "m3", user1: { id: "me", profile: null }, user2: { id: "u3", profile: { displayName: "Kemunto", photos: ["gradient:from-teal-500 to-cyan-500"], city: "Eldoret" } }, messages: [] },
-  { id: "m4", user1: { id: "me", profile: null }, user2: { id: "u4", profile: { displayName: "Njeri", photos: ["gradient:from-amber-500 to-orange-500"], city: "Nakuru" } }, messages: [{ content: "That sounds amazing 🌍", createdAt: new Date(Date.now() - 86400000).toISOString() }] },
+  { id: "m1", user1: { id: "me", profile: null }, user2: { id: "u1", profile: { displayName: "Amina", photos: ["solid:#C2185B"], city: "Nairobi" } }, messages: [{ content: "Hey, how are you?", createdAt: new Date(Date.now() - 120000).toISOString() }] },
+  { id: "m2", user1: { id: "me", profile: null }, user2: { id: "u2", profile: { displayName: "Wanjiru", photos: ["solid:#1565C0"], city: "Mombasa" } }, messages: [{ content: "Would love to catch up sometime!", createdAt: new Date(Date.now() - 3600000 * 3).toISOString() }] },
+  { id: "m3", user1: { id: "me", profile: null }, user2: { id: "u3", profile: { displayName: "Kemunto", photos: ["solid:#00695C"], city: "Eldoret" } }, messages: [] },
+  { id: "m4", user1: { id: "me", profile: null }, user2: { id: "u4", profile: { displayName: "Njeri", photos: ["solid:#E65100"], city: "Nakuru" } }, messages: [{ content: "That sounds amazing!", createdAt: new Date(Date.now() - 86400000).toISOString() }] },
 ];
 
 // Simple avatar component for gradient placeholders
 function Avatar({ photos, displayName, size = 56 }: { photos: string[]; displayName?: string; size?: number }) {
   const photo = photos?.[0] ?? "";
+  if (photo.startsWith("solid:")) {
+    const colour = photo.replace("solid:", "");
+    return (
+      <div className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
+        style={{ width: size, height: size, background: colour, fontSize: size * 0.38 }}>
+        {displayName?.[0]?.toUpperCase() ?? "?"}
+      </div>
+    );
+  }
   if (photo.startsWith("gradient:")) {
     const gradient = photo.replace("gradient:", "");
     return (
-      <div
-        className={`rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center font-bold text-white flex-shrink-0`}
-        style={{ width: size, height: size, fontSize: size * 0.38 }}
-      >
+      <div className={`rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center font-bold text-white flex-shrink-0`}
+        style={{ width: size, height: size, fontSize: size * 0.38 }}>
         {displayName?.[0]?.toUpperCase() ?? "?"}
       </div>
     );
   }
   return (
     <img
-      src={photo || `https://ui-avatars.com/api/?name=${displayName}&background=E8336D&color=fff`}
+      src={photo || `https://ui-avatars.com/api/?name=${displayName}&background=333&color=fff&bold=true`}
       className="rounded-full object-cover flex-shrink-0"
       style={{ width: size, height: size }}
       alt={displayName}

@@ -6,12 +6,12 @@ import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video,
 import InstallPrompt from "@/components/InstallPrompt";
 
 const HERO_PROFILES = [
-  { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600" },
-  { name: "James", age: 29, city: "Mombasa", verified: true, online: false, bg: "from-purple-500 to-indigo-600" },
-  { name: "Fatuma", age: 24, city: "Kisumu", verified: true, online: true, bg: "from-amber-500 to-orange-600" },
-  { name: "Kevin", age: 28, city: "Eldoret", verified: true, online: true, bg: "from-blue-500 to-violet-600" },
-  { name: "Grace", age: 27, city: "Nakuru", verified: true, online: false, bg: "from-rose-500 to-pink-600" },
-  { name: "Brian", age: 31, city: "Thika", verified: true, online: true, bg: "from-teal-500 to-cyan-600" },
+  { name: "Amina",  age: 26, city: "Nairobi", verified: true,  online: true,  colour: "#C2185B" },
+  { name: "James",  age: 29, city: "Mombasa", verified: true,  online: false, colour: "#1565C0" },
+  { name: "Fatuma", age: 24, city: "Kisumu",  verified: true,  online: true,  colour: "#E65100" },
+  { name: "Kevin",  age: 28, city: "Eldoret", verified: true,  online: true,  colour: "#00695C" },
+  { name: "Grace",  age: 27, city: "Nakuru",  verified: true,  online: false, colour: "#4527A0" },
+  { name: "Brian",  age: 31, city: "Thika",   verified: true,  online: true,  colour: "#AD1457" },
 ];
 
 const FEATURES = [
@@ -119,9 +119,6 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
-        {/* Background glow */}
-        <div style={{ position: "absolute", top: "20%", left: "10%", width: 400, height: 400, background: "rgba(232,51,109,0.12)", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", top: "40%", right: "5%", width: 300, height: 300, background: "rgba(108,99,255,0.1)", borderRadius: "50%", filter: "blur(80px)", pointerEvents: "none" }} />
 
         <div className="max-w-7xl mx-auto px-6 py-10 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full z-10">
           {/* Left */}
@@ -158,11 +155,11 @@ export default function LandingPage() {
           <div className="relative h-[400px] lg:h-[520px] w-full max-w-[400px] mx-auto lg:mr-0 animate-fade-in">
             {HERO_PROFILES.map((p, i) => {
               const positions = [
-                { top: "0%", left: "10%", rotate: "-3deg", scale: 1 },
-                { top: "0%", right: "0%", rotate: "4deg", scale: 0.95 },
-                { top: "35%", left: "0%", rotate: "-2deg", scale: 0.92 },
-                { top: "35%", right: "5%", rotate: "3deg", scale: 0.98 },
-                { top: "65%", left: "15%", rotate: "2deg", scale: 0.9 },
+                { top: "0%",  left: "10%", rotate: "-3deg", scale: 1    },
+                { top: "0%",  right: "0%", rotate: "4deg",  scale: 0.95 },
+                { top: "35%", left: "0%",  rotate: "-2deg", scale: 0.92 },
+                { top: "35%", right: "5%", rotate: "3deg",  scale: 0.98 },
+                { top: "65%", left: "15%", rotate: "2deg",  scale: 0.9  },
                 { top: "65%", right: "2%", rotate: "-4deg", scale: 0.88 },
               ];
               const pos = positions[i];
@@ -170,25 +167,29 @@ export default function LandingPage() {
                 <div key={p.name} className="glass" style={{
                   position: "absolute", ...pos,
                   transform: `rotate(${pos.rotate}) scale(${pos.scale})`,
-                  borderRadius: "var(--radius-lg)", padding: "16px", width: 150,
+                  borderRadius: "var(--radius-lg)", padding: "12px", width: 148,
                   transition: "transform 0.3s ease",
-                  animationDelay: `${i * 0.1}s`,
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(0deg) scale(1.05)`; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(0deg) scale(1.04)`; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`; }}
                 >
-                  <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${p.bg} flex items-center justify-center mb-3 relative overflow-hidden group`}>
-                    <span style={{ fontSize: 40, fontWeight: 800, color: "rgba(255,255,255,0.9)", letterSpacing: -1 }}>{p.name[0]}</span>
-                    <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Heart className="text-white w-8 h-8 fill-white/50" />
-                    </div>
+                  {/* Solid colour avatar — no gradient */}
+                  <div className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center relative overflow-hidden"
+                    style={{ backgroundColor: p.colour }}>
+                    <span className="text-white font-black select-none" style={{ fontSize: 40, opacity: 0.22 }}>
+                      {p.name[0]}
+                    </span>
+                    {p.online && (
+                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400 ring-1 ring-white/20" />
+                    )}
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{p.name}, {p.age}</div>
                   <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{p.city}</div>
-                  <div style={{ display: "flex", gap: 6, marginTop: 8, alignItems: "center" }}>
-                    {p.verified && <span className="badge badge-success" style={{ fontSize: 10, padding: "2px 6px" }}>✓ Verified</span>}
-                    {p.online && <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: "var(--success)" }}><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--success)", display: "inline-block" }} />Online</span>}
-                  </div>
+                  {p.verified && (
+                    <div className="flex items-center gap-1 mt-1.5">
+                      <span style={{ fontSize: 10, color: "#60A5FA", fontWeight: 600 }}>✓ Verified</span>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -223,7 +224,6 @@ export default function LandingPage() {
 
       {/* How It Works */}
       <section id="how-it-works" style={{ padding: "100px 24px", background: "var(--bg-surface)", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, background: "rgba(232,51,109,0.05)", borderRadius: "50%", filter: "blur(80px)" }} />
         <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
             <div className="badge badge-pink" style={{ marginBottom: 16, display: "inline-flex" }}><Heart size={12} /> Your Journey</div>
@@ -320,7 +320,7 @@ export default function LandingPage() {
                 </div>
                 <p style={{ fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: 24, fontStyle: "italic" }}>&ldquo;{t.text}&rdquo;</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "rgba(232,51,109,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 24 }}>{t.emoji}</div>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#C2185B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "white" }}>{t.name[0]}</div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t.city}</div>
