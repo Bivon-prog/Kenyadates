@@ -9,14 +9,14 @@ const HERO_PROFILES = [
   { name: "Amina", age: 26, city: "Nairobi", verified: true, online: true, bg: "from-pink-500 to-rose-600" },
   { name: "James", age: 29, city: "Mombasa", verified: true, online: false, bg: "from-purple-500 to-indigo-600" },
   { name: "Fatuma", age: 24, city: "Kisumu", verified: true, online: true, bg: "from-amber-500 to-orange-600" },
-  { name: "Brian", age: 31, city: "Kampala", verified: false, online: true, bg: "from-teal-500 to-cyan-600" },
-  { name: "Grace", age: 27, city: "Dar es Salaam", verified: true, online: false, bg: "from-rose-500 to-pink-600" },
   { name: "Kevin", age: 28, city: "Eldoret", verified: true, online: true, bg: "from-blue-500 to-violet-600" },
+  { name: "Grace", age: 27, city: "Nakuru", verified: true, online: false, bg: "from-rose-500 to-pink-600" },
+  { name: "Brian", age: 31, city: "Thika", verified: true, online: true, bg: "from-teal-500 to-cyan-600" },
 ];
 
 const FEATURES = [
   { icon: Shield, title: "Face Verified Profiles", desc: "Every profile is verified with Smile Identity AI — only real people, no catfishing.", color: "var(--success)" },
-  { icon: MapPin, title: "Local & East African", desc: "Find matches in Nairobi, Mombasa, Kampala, Dar es Salaam and across the region.", color: "var(--accent-primary)" },
+  { icon: MapPin, title: "Kenya First", desc: "Find matches in Nairobi, Mombasa, Kisumu, Nakuru, Eldoret and towns across Kenya.", color: "var(--accent-primary)" },
   { icon: MessageCircle, title: "Real-Time Chat", desc: "Instant messaging with voice notes, photo sharing and AI-assisted translation.", color: "#6C63FF" },
   { icon: Globe, title: "11 Languages", desc: "Chat in English, Swahili, French and 8 more languages with live translation.", color: "#00C9A7" },
   { icon: Video, title: "In-App Video Calls", desc: "Go from chat to face-to-face with secure in-app audio & video calls.", color: "var(--accent-gold)" },
@@ -85,13 +85,37 @@ export default function LandingPage() {
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <InstallPrompt />
-          <Link href="/login" className="btn-secondary" style={{ padding: "10px 24px", fontSize: 14 }}>Sign In</Link>
-          <Link href="/register" className="btn-primary" style={{ padding: "10px 24px", fontSize: 14 }}>Join Free</Link>
-          <button onClick={() => setMenuOpen(!menuOpen)} style={{ display: "none", background: "none", border: "none", color: "white", cursor: "pointer" }} className="md:hidden block">
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          <Link href="/login" className="btn-secondary hidden sm:inline-flex" style={{ padding: "10px 24px", fontSize: 14 }}>Sign In</Link>
+          <Link href="/register" className="btn-primary hidden sm:inline-flex" style={{ padding: "10px 24px", fontSize: 14 }}>Join Free</Link>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full"
+            style={{ background: "rgba(255,255,255,0.08)", border: "none", color: "white", cursor: "pointer" }}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </nav>
+
+      {/* Mobile menu dropdown */}
+      {menuOpen && (
+        <div className="md:hidden fixed top-[65px] inset-x-0 z-50 animate-slide-up"
+          style={{ background: "rgba(13,13,13,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+            {["Features", "How It Works", "Pricing", "Stories"].map(item => (
+              <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`}
+                onClick={() => setMenuOpen(false)}
+                style={{ color: "var(--text-secondary)", fontSize: 16, fontWeight: 500, textDecoration: "none", padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
+                {item}
+              </a>
+            ))}
+            <div style={{ display: "flex", gap: 12, paddingTop: 8 }}>
+              <Link href="/login" className="btn-secondary" style={{ flex: 1, padding: "12px", fontSize: 14, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Sign In</Link>
+              <Link href="/register" className="btn-primary" style={{ flex: 1, padding: "12px", fontSize: 14, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Join Free</Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
@@ -103,14 +127,14 @@ export default function LandingPage() {
           {/* Left */}
           <div style={{ animationDelay: "0.1s" }} className="animate-fade-in text-center lg:text-left">
             <div className="badge badge-pink mx-auto lg:mx-0 mb-6 w-fit">
-              <Sparkles size={12} /> East Africa&apos;s Dating Platform
+              <Sparkles size={12} /> Kenya&apos;s #1 Dating App
             </div>
-            <h1 className="font-playfair text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-tight mb-6 text-white">
+            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-tight mb-6 text-white">
               Real People.<br />
-              <span className="bg-gradient-to-r from-brand-orange to-brand-peach bg-clip-text text-transparent">Real Connections.</span>
+              <span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Real Connections.</span>
             </h1>
             <p className="text-lg text-white/70 leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
-              Meet verified singles from Kenya, Uganda, Tanzania and across East Africa. Face-verified profiles. Real conversations. Genuine relationships.
+              Meet verified singles from Nairobi, Mombasa, Kisumu and all across Kenya. Face-verified profiles, Swahili chat, and M-Pesa payments — built for us.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Link href="/register" className="btn-primary text-base px-8 py-4 flex items-center justify-center gap-2">
@@ -123,7 +147,7 @@ export default function LandingPage() {
             <div className="flex gap-8 justify-center lg:justify-start flex-wrap">
               {[["50K+", "Members"], ["98%", "Verified"], ["4.9★", "Rating"]].map(([val, label]) => (
                 <div key={label}>
-                  <div className="text-3xl font-black bg-gradient-to-r from-brand-orange to-brand-peach bg-clip-text text-transparent">{val}</div>
+                  <div className="text-3xl font-black" style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{val}</div>
                   <div className="text-sm text-white/50 mt-1 font-medium tracking-wide uppercase">{label}</div>
                 </div>
               ))}
@@ -154,6 +178,7 @@ export default function LandingPage() {
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`; }}
                 >
                   <div className={`w-full aspect-square rounded-2xl bg-gradient-to-br ${p.bg} flex items-center justify-center mb-3 relative overflow-hidden group`}>
+                    <span style={{ fontSize: 40, fontWeight: 800, color: "rgba(255,255,255,0.9)", letterSpacing: -1 }}>{p.name[0]}</span>
                     <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Heart className="text-white w-8 h-8 fill-white/50" />
                     </div>
@@ -176,7 +201,7 @@ export default function LandingPage() {
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <div className="badge badge-pink" style={{ marginBottom: 16, display: "inline-flex" }}><Shield size={12} /> Why Kenyandates</div>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700, marginBottom: 16 }}>
-            Built for <span className="gradient-text">East Africa</span>
+            Built for <span className="gradient-text">Kenya</span>
           </h2>
           <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 500, margin: "0 auto" }}>Everything you need for safe, genuine connections — designed for our culture.</p>
         </div>
@@ -317,7 +342,7 @@ export default function LandingPage() {
             Ready to Find Your <span className="gradient-text">Match?</span>
           </h2>
           <p style={{ fontSize: 18, color: "var(--text-secondary)", marginBottom: 40, lineHeight: 1.7 }}>
-            Join 50,000+ verified singles across East Africa. Create your free profile and get 150 Coins to start your journey.
+            Join 50,000+ verified singles across Kenya. Create your free profile and get 150 Coins to start your journey.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/register" className="btn-primary" style={{ fontSize: 17, padding: "18px 48px" }}>
@@ -359,7 +384,7 @@ export default function LandingPage() {
             ))}
           </div>
           <div style={{ borderTop: "1px solid var(--border)", paddingTop: 24, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
-            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>© 2025 Kenyandates. All rights reserved.</p>
+            <p style={{ fontSize: 13, color: "var(--text-muted)" }}>© 2026 Kenyandates. All rights reserved.</p>
             <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Made with ❤️ in Nairobi, Kenya 🇰🇪</p>
           </div>
         </div>

@@ -26,7 +26,9 @@ export default function CallPage() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const userId = typeof window !== "undefined" ? localStorage.getItem("userId") || "" : "";
+  const userId = typeof window !== "undefined" ? localStorage.getItem("kd_user")
+    ? (() => { try { return JSON.parse(localStorage.getItem("kd_user")!).id || ""; } catch { return ""; } })()
+    : "" : "";
 
   useEffect(() => {
     startCall();

@@ -33,7 +33,8 @@ export default function LoginPage() {
         ? { email: identifier, password }
         : { phoneNumber: identifier, password };
 
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const res = await fetch(`${API}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

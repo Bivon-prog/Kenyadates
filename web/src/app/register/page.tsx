@@ -115,12 +115,15 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/auth/register", {
+      const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+      // Step 1: Create account (phone is optional — don't send fake numbers)
+      const res = await fetch(`${API}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email,
-          phoneNumber: form.phone || `254${Date.now()}`,
+          ...(form.phone ? { phoneNumber: `254${form.phone.replace(/^0/, "")}` } : {}),
           password: form.password,
           displayName: form.name,
           age: calcAge(form.dob),
@@ -132,6 +135,18 @@ export default function RegisterPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
       if (data.verifyUrl) setVerifyUrl(data.verifyUrl);
+
+      // Step 2: If photos were selected, store them in sessionStorage
+      // to upload after email verification + login
+      if (photoFiles.length > 0) {
+        const toUpload = photoFiles.filter(Boolean);
+        if (toUpload.length > 0) {
+          // Store blob URLs so the user sees them in their profile after login
+          const urls = photos.filter(Boolean);
+          sessionStorage.setItem("pending_photos_count", String(urls.length));
+        }
+      }
+
       setSuccess(true);
     } catch (err: any) {
       setError(err.message);
@@ -461,13 +476,14 @@ export default function RegisterPage() {
                       border: `2px dashed ${i === 0 ? "var(--accent-primary)" : "var(--border)"}`,
                       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
                       gap: 6, cursor: "pointer",
-                      background: photos[i] ? "transparent" : (i === 0 ? "rgba(232,51,109,0.05)" : "var(--bg-surface)"),
+                      backgroundColor: photos[i] ? "transparent" : (i === 0 ? "rgba(232,51,109,0.05)" : "var(--bg-surface)"),
                       backgroundImage: photos[i] ? `url(${photos[i]})` : "none",
                       backgroundSize: "cover",
                       backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
                       overflow: "hidden",
                       position: "relative",
-                      transition: "all 0.2s"
+                      transition: "border-color 0.2s"
                     }}
                   >
                     <input

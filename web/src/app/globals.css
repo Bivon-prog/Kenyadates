@@ -33,6 +33,10 @@
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
   --font-sans: 'Inter', sans-serif;
+  /* Tailwind v4 custom tokens — fixes brand-orange / brand-peach undefined classes */
+  --color-brand-orange: #E8336D;
+  --color-brand-peach: #FF6B9D;
+  --color-brand-gold: #F5C542;
 }
 
 *, *::before, *::after {
@@ -282,4 +286,46 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Safe-area bottom padding for notches / home indicator */
+.safe-area-pb {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+/* Glass panel — used by wallet and other pages */
+.glass-panel {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+}
+
+/* Responsive app shell: on desktop push content right of bottom nav */
+@media (min-width: 768px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    min-height: 100vh;
+  }
+  .app-content {
+    max-width: 960px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+/* Spin utility */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 0.8s linear infinite; }
+
+/* Hide scrollbar visually but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
