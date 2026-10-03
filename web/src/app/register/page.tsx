@@ -6,6 +6,7 @@ import {
   Heart, ArrowRight, ArrowLeft, Check, Camera, MapPin,
   User, Target, Smile, Eye, EyeOff, Mail, AlertCircle
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const INTERESTS = [
   "Travel ✈️", "Music 🎵", "Food 🍽️", "Sports ⚽", "Reading 📚",
@@ -41,6 +42,7 @@ const TOTAL_STEPS = 5;
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     email: "", phone: "", password: "",
@@ -134,19 +136,16 @@ export default function RegisterPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
-      if (data.verifyUrl) setVerifyUrl(data.verifyUrl);
 
-      // Step 2: If photos were selected, store them in sessionStorage
-      // to upload after email verification + login
-      if (photoFiles.length > 0) {
-        const toUpload = photoFiles.filter(Boolean);
-        if (toUpload.length > 0) {
-          // Store blob URLs so the user sees them in their profile after login
-          const urls = photos.filter(Boolean);
-          sessionStorage.setItem("pending_photos_count", String(urls.length));
-        }
+      // If backend returns a token, auto-login immediately — no email verify step needed
+      if (data.token && data.user) {
+        login(data.token, data.user);
+        // login() redirects to /app automatically
+        return;
       }
 
+      // Fallback: show success screen with verify link
+      if (data.verifyUrl) setVerifyUrl(data.verifyUrl);
       setSuccess(true);
     } catch (err: any) {
       setError(err.message);

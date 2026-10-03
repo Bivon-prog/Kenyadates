@@ -51,6 +51,7 @@ export class AuthService {
         email: dto.email,
         phoneNumber: dto.phoneNumber || null,
         emailVerificationToken: verificationToken,
+        emailVerified: true,   // auto-verify so users can log in immediately
         passwordHash,
         profile: {
           create: {
@@ -65,12 +66,24 @@ export class AuthService {
       include: { profile: true },
     });
 
-    // Send verification email and get the URL back
+    // Grant welcome coins immediately since we auto-verify
+    await this.coinService.grantWelcomeCoins(user.id, 150);
+
+    // Send verification email in background (non-blocking)
     const verifyUrl = await this.emailService.sendVerificationEmail(dto.email, verificationToken);
 
+    // Return a JWT so the client can log in immediately
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
     return {
-      message: 'Registration successful! Please verify your email to continue.',
-      verifyUrl, // returned for dev convenience; frontend shows this as a clickable link
+      message: 'Registration successful! You can now log in.',
+      token,
+      user,
+      verifyUrl,
     };
   }
 
