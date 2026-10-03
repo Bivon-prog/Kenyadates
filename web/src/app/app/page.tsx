@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Bell, Search, Star, MapPin, Crown, Coins,
@@ -130,13 +130,63 @@ export default function AppHomePage() {
   const [activeSection, setActiveSection] = useState("Recommended");
   const [showSearch, setShowSearch] = useState(false);
   const [search, setSearch] = useState("");
+  const [realProfiles, setRealProfiles] = useState<any[]>([]);
+  const [myCoins, setMyCoins] = useState(0);
+  const [myName, setMyName] = useState("");
+
+  // Load real data on mount
+  useEffect(() => {
+    const token = localStorage.getItem("kd_token");
+    if (!token) return;
+
+    // Load real recommendations
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/discovery/recommendations`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(r => r.ok ? r.json() : []).then(d => {
+      if (Array.isArray(d) && d.length > 0) setRealProfiles(d);
+    }).catch(() => {});
+
+    // Load wallet balance
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"}/wallet/balance`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(r => r.ok ? r.json() : null).then(d => {
+      if (d?.balance !== undefined) setMyCoins(d.balance);
+    }).catch(() => {});
+
+    // Load user profile
+    const stored = localStorage.getItem("kd_user");
+    if (stored) {
+      try {
+        const u = JSON.parse(stored);
+        setMyName(u.profile?.displayName?.split(" ")[0] ?? "");
+      } catch {}
+    }
+  }, []);
+
+  // Use real profiles from API when available, fall back to mock
+  const displayProfiles = realProfiles.length > 0
+    ? realProfiles.map((rp, i) => ({
+        id:       i + 100,
+        name:     rp.displayName,
+        age:      rp.age,
+        city:     rp.city,
+        distance: rp.city ? `${rp.city}` : "Kenya",
+        verified: rp.user?.verificationStatus === "VERIFIED",
+        online:   rp.isOnline ?? false,
+        premium:  null as string | null,
+        interests: rp.interests ?? [],
+        bio:      rp.bio ?? "",
+        bg:       ["from-pink-500 to-rose-500","from-blue-500 to-indigo-500","from-purple-500 to-violet-500","from-teal-500 to-cyan-500","from-amber-500 to-orange-500"][i % 5],
+        match:    Math.floor(70 + Math.random() * 28),
+      }))
+    : PROFILES;
 
   const filtered = search
-    ? PROFILES.filter(p =>
+    ? displayProfiles.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.city.toLowerCase().includes(search.toLowerCase())
       )
-    : PROFILES;
+    : displayProfiles;
 
   return (
     /* On desktop the side nav is rendered by BottomNav (72px wide).
@@ -179,7 +229,7 @@ export default function AppHomePage() {
             <Coins size={14} color="var(--accent-gold)" />
             <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-gold)" }}>My Coins</span>
           </div>
-          <div className="text-xl font-black text-white mb-2">150 🪙</div>
+          <div className="text-xl font-black text-white mb-2">{myCoins > 0 ? myCoins.toLocaleString() : "150"} 🪙</div>
           <Link href="/wallet" className="btn-gold block text-center no-underline" style={{ fontSize: 11, padding: "7px 12px" }}>Buy Coins</Link>
         </div>
 
@@ -200,8 +250,10 @@ export default function AppHomePage() {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-xl font-black text-white mb-0.5">Good day 👋</h1>
-              <p className="text-white/40 text-sm">You have 3 new matches waiting</p>
+              <h1 className="text-xl font-black text-white mb-0.5">
+                {myName ? `Hey ${myName} 👋` : "Good day 👋"}
+              </h1>
+              <p className="text-white/40 text-sm">Start swiping to find your match</p>
             </div>
             <div className="flex gap-2">
               <button
