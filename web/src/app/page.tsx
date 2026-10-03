@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video, Coins, Crown, Check, Menu, X, Sparkles, Users, Lock } from "lucide-react";
-
+import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video, Coins, Crown, Check, Menu, X, Users, Lock } from "lucide-react";
 import InstallPrompt from "@/components/InstallPrompt";
 
 const HERO_PROFILES = [
@@ -15,33 +14,55 @@ const HERO_PROFILES = [
 ];
 
 const FEATURES = [
-  { icon: Shield, title: "Face Verified Profiles", desc: "Every profile is verified with Smile Identity AI — only real people, no catfishing.", color: "var(--success)" },
-  { icon: MapPin, title: "Kenya First", desc: "Find matches in Nairobi, Mombasa, Kisumu, Nakuru, Eldoret and towns across Kenya.", color: "var(--accent-primary)" },
-  { icon: MessageCircle, title: "Real-Time Chat", desc: "Instant messaging with voice notes, photo sharing and AI-assisted translation.", color: "#6C63FF" },
-  { icon: Globe, title: "11 Languages", desc: "Chat in English, Swahili, French and 8 more languages with live translation.", color: "#00C9A7" },
-  { icon: Video, title: "In-App Video Calls", desc: "Go from chat to face-to-face with secure in-app audio & video calls.", color: "var(--accent-gold)" },
-  { icon: Lock, title: "Privacy First", desc: "Control exactly who sees your location, photos, and online status.", color: "#FF6B6B" },
+  { icon: Shield,       title: "Face Verified Profiles", desc: "Every profile verified — only real people, no catfishing.",               color: "var(--success)" },
+  { icon: MapPin,       title: "Kenya First",            desc: "Find matches across Nairobi, Mombasa, Kisumu and all of Kenya.",          color: "var(--accent-primary)" },
+  { icon: MessageCircle,title: "Real-Time Chat",         desc: "Instant messaging with voice notes and Swahili translation.",             color: "#6C63FF" },
+  { icon: Globe,        title: "11 Languages",           desc: "Chat in English, Swahili, French and more with live translation.",        color: "#00C9A7" },
+  { icon: Video,        title: "In-App Video Calls",     desc: "Go from chat to face-to-face with secure in-app calls.",                  color: "var(--accent-gold)" },
+  { icon: Lock,         title: "Privacy First",          desc: "Control exactly who sees your location, photos and online status.",       color: "#FF6B6B" },
 ];
 
 const PLANS = [
-  { name: "Free", price: "0", period: "forever", color: "var(--border)", textColor: "var(--text-secondary)", features: ["Basic profile", "5 likes/day", "Limited messaging", "Location search"], cta: "Get Started", popular: false },
-  { name: "Gold", price: "999", period: "month", color: "var(--accent-primary)", textColor: "white", gradient: "var(--gradient-primary)", features: ["Unlimited likes", "See who liked you", "Advanced filters", "Chat translation", "Profile boost 1×/week"], cta: "Go Gold", popular: true },
-  { name: "Platinum", price: "1,899", period: "month", color: "var(--accent-gold)", textColor: "#0D0D0D", gradient: "var(--gradient-gold)", features: ["Everything in Gold", "Video calls (5hrs/mo)", "Super Likes 5×/day", "Incognito browsing", "Priority support"], cta: "Go Platinum", popular: false },
-  { name: "Diamond", price: "3,499", period: "month", color: "#A78BFA", textColor: "white", gradient: "linear-gradient(135deg,#A78BFA,#6C63FF)", features: ["Everything in Platinum", "Unlimited video calls", "AI match insights", "Top profile placement", "Dedicated support"], cta: "Go Diamond", popular: false },
+  { name: "Free",     price: "0",     period: "forever", features: ["Basic profile", "5 likes/day", "Limited messaging", "Location search"],                                                          cta: "Get Started", popular: false, gradient: "", textColor: "var(--text-secondary)" },
+  { name: "Gold",     price: "999",   period: "month",   features: ["Unlimited likes", "See who liked you", "Advanced filters", "Chat translation", "Profile boost 1×/week"],                       cta: "Go Gold",     popular: true,  gradient: "var(--gradient-primary)",       textColor: "white" },
+  { name: "Platinum", price: "1,899", period: "month",   features: ["Everything in Gold", "Video calls 5hrs/mo", "Super Likes 5×/day", "Incognito browsing", "Priority support"],                  cta: "Go Platinum", popular: false, gradient: "var(--gradient-gold)",          textColor: "#0D0D0D" },
+  { name: "Diamond",  price: "3,499", period: "month",   features: ["Everything in Platinum", "Unlimited video calls", "Top profile placement", "Dedicated support"],                              cta: "Go Diamond",  popular: false, gradient: "linear-gradient(135deg,#A78BFA,#6C63FF)", textColor: "white" },
 ];
 
 const TESTIMONIALS = [
-  { name: "Wanjiku M.", city: "Nairobi", text: "I met my husband on Kenyandates! The face verification made me feel so safe.", rating: 5, emoji: "👩🏾" },
-  { name: "David O.", city: "Kisumu", text: "The translation feature is amazing — I'm chatting with someone in Tanzania!", rating: 5, emoji: "👨🏾" },
-  { name: "Aisha K.", city: "Mombasa", text: "So many genuine people here. Finally a dating app made for us.", rating: 5, emoji: "👩🏿" },
+  { name: "Wanjiku M.", city: "Nairobi", text: "I met my husband on Kenyandates! The face verification made me feel so safe.", rating: 5 },
+  { name: "David O.",   city: "Kisumu",  text: "The translation feature is amazing — I'm chatting with someone in Tanzania!", rating: 5 },
+  { name: "Aisha K.",   city: "Mombasa", text: "So many genuine people here. Finally a dating app made for us.",              rating: 5 },
 ];
 
 const STEPS = [
-  { step: "01", title: "Create Your Profile", desc: "Sign up with your phone, add photos and tell your story.", icon: "📱" },
-  { step: "02", title: "Get Face Verified", desc: "Complete face verification to get your verified badge and 150 free Coins.", icon: "✅" },
-  { step: "03", title: "Discover & Match", desc: "Browse profiles, like the ones you love, and match with people who like you back.", icon: "💘" },
-  { step: "04", title: "Chat & Connect", desc: "Start chatting, call, send gifts and build a real connection.", icon: "💬" },
+  { step: "01", title: "Create Your Profile", desc: "Sign up, add photos and tell your story.",                                           icon: "📱" },
+  { step: "02", title: "Get Face Verified",   desc: "Quick selfie to get your verified badge and 150 free Coins.",                        icon: "✅" },
+  { step: "03", title: "Discover & Match",    desc: "Browse profiles, like the ones you love and match with people who like you back.",   icon: "💘" },
+  { step: "04", title: "Chat & Connect",      desc: "Start chatting, call, send gifts and build a real connection.",                      icon: "💬" },
 ];
+
+// Footer link map — real pages or /coming-soon
+const FOOTER_LINKS: Record<string, Record<string, string>> = {
+  Platform: {
+    "Features":     "#features",
+    "How It Works": "#how-it-works",
+    "Pricing":      "#pricing",
+    "Download App": "#",
+  },
+  Company: {
+    "About Us":        "/about",
+    "Success Stories": "#stories",
+    "Blog":            "/blog",
+    "Careers":         "/careers",
+  },
+  Legal: {
+    "Privacy Policy":        "/privacy",
+    "Terms of Service":      "/terms",
+    "Community Guidelines":  "/guidelines",
+    "Cookie Policy":         "/cookies",
+  },
+};
 
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,21 +74,28 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const navLinks = [
+    { label: "Features",     href: "#features"      },
+    { label: "How It Works", href: "#how-it-works"  },
+    { label: "Pricing",      href: "#pricing"       },
+    { label: "Stories",      href: "#stories"       },
+  ];
+
   return (
     <div style={{ background: "var(--bg-primary)", minHeight: "100vh", overflowX: "hidden" }}>
 
-      {/* Navbar */}
+      {/* ── Navbar ── */}
       <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 200, /* z-200 above hero content */
         padding: "16px 24px",
-        background: scrolled ? "rgba(13,13,13,0.95)" : "transparent",
-        backdropFilter: scrolled ? "blur(20px)" : "none",
+        background: scrolled ? "rgba(13,13,13,0.97)" : "rgba(13,13,13,0.85)",
+        backdropFilter: "blur(20px)",
         borderBottom: scrolled ? "1px solid var(--border)" : "none",
         transition: "all 0.3s ease",
-        display: "flex", alignItems: "center", justifyContent: "space-between"
+        display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#E8336D", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Heart size={18} fill="white" color="white" />
           </div>
           <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "white" }}>
@@ -75,63 +103,66 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="hidden md:flex">
-          {["Features", "How It Works", "Pricing", "Stories"].map(item => (
-            <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`} style={{ color: "var(--text-secondary)", fontSize: 14, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
+        {/* Desktop links */}
+        <div className="hidden md:flex" style={{ alignItems: "center", gap: 32 }}>
+          {navLinks.map(({ label, href }) => (
+            <a key={label} href={href}
+              style={{ color: "var(--text-secondary)", fontSize: 15, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "white")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}>{item}</a>
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}>
+              {label}
+            </a>
           ))}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <InstallPrompt />
-          <Link href="/login" className="btn-secondary hidden sm:inline-flex" style={{ padding: "10px 24px", fontSize: 14 }}>Sign In</Link>
-          <Link href="/register" className="btn-primary hidden sm:inline-flex" style={{ padding: "10px 24px", fontSize: 14 }}>Join Free</Link>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full"
-            style={{ background: "rgba(255,255,255,0.08)", border: "none", color: "white", cursor: "pointer" }}
-          >
+          <Link href="/login"    className="btn-secondary hidden sm:inline-flex" style={{ padding: "10px 20px", fontSize: 14 }}>Sign In</Link>
+          <Link href="/register" className="btn-primary    hidden sm:inline-flex" style={{ padding: "10px 20px", fontSize: 14 }}>Join Free</Link>
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl"
+            style={{ background: "rgba(255,255,255,0.08)", border: "none", color: "white", cursor: "pointer" }}>
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden fixed top-[65px] inset-x-0 z-50 animate-slide-up"
-          style={{ background: "rgba(13,13,13,0.97)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
-          <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
-            {["Features", "How It Works", "Pricing", "Stories"].map(item => (
-              <a key={item} href={`#${item.toLowerCase().replace(" ", "-")}`}
-                onClick={() => setMenuOpen(false)}
-                style={{ color: "var(--text-secondary)", fontSize: 16, fontWeight: 500, textDecoration: "none", padding: "8px 0", borderBottom: "1px solid var(--border)" }}>
-                {item}
+        <div className="md:hidden fixed inset-x-0 z-[190] animate-slide-up"
+          style={{ top: 65, background: "rgba(13,13,13,0.98)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
+          <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 0 }}>
+            {navLinks.map(({ label, href }) => (
+              <a key={label} href={href} onClick={() => setMenuOpen(false)}
+                style={{ color: "var(--text-secondary)", fontSize: 16, fontWeight: 500, textDecoration: "none",
+                  padding: "14px 0", borderBottom: "1px solid var(--border)" }}>
+                {label}
               </a>
             ))}
-            <div style={{ display: "flex", gap: 12, paddingTop: 8 }}>
-              <Link href="/login" className="btn-secondary" style={{ flex: 1, padding: "12px", fontSize: 14, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Sign In</Link>
-              <Link href="/register" className="btn-primary" style={{ flex: 1, padding: "12px", fontSize: 14, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Join Free</Link>
+            <div style={{ display: "flex", gap: 12, paddingTop: 16 }}>
+              <Link href="/login"    className="btn-secondary" style={{ flex: 1, padding: 14, fontSize: 15, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Sign In</Link>
+              <Link href="/register" className="btn-primary"   style={{ flex: 1, padding: 14, fontSize: 15, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Join Free</Link>
             </div>
           </div>
         </div>
       )}
 
-      {/* Hero */}
-      <section className="relative min-h-screen flex items-center pt-24 overflow-hidden">
+      {/* ── Hero — Change 18: navbar no longer overlaps hero text (z-index fixed) ── */}
+      <section className="relative min-h-screen flex items-center pt-28 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 py-10 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full">
 
-        <div className="max-w-7xl mx-auto px-6 py-10 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full z-10">
           {/* Left */}
-          <div style={{ animationDelay: "0.1s" }} className="animate-fade-in text-center lg:text-left">
-            <div className="badge badge-pink mx-auto lg:mx-0 mb-6 w-fit">
-              <Sparkles size={12} /> Kenya&apos;s #1 Dating App
-            </div>
-            <h1 style={{ fontFamily: "'Playfair Display', serif" }} className="text-[clamp(2.5rem,5vw,4.5rem)] font-bold leading-tight mb-6 text-white">
+          <div className="animate-fade-in text-center lg:text-left">
+            {/* Change 19 & 20: removed the oval "Kenya's #1 Dating App" badge entirely */}
+            <h1 style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-[clamp(2.8rem,5vw,4.5rem)] font-bold leading-tight mb-6 text-white">
               Real People.<br />
-              <span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Real Connections.</span>
+              <span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                Real Connections.
+              </span>
             </h1>
             <p className="text-lg text-white/70 leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
-              Meet verified singles from Nairobi, Mombasa, Kisumu and all across Kenya. Face-verified profiles, Swahili chat, and M-Pesa payments — built for us.
+              Meet verified singles from Nairobi, Mombasa, Kisumu and all across Kenya.
+              Face-verified profiles, Swahili chat, and M-Pesa payments — built for us.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12">
               <Link href="/register" className="btn-primary text-base px-8 py-4 flex items-center justify-center gap-2">
@@ -151,45 +182,35 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right — Profile cards grid */}
+          {/* Right — profile cards */}
           <div className="relative h-[400px] lg:h-[520px] w-full max-w-[400px] mx-auto lg:mr-0 animate-fade-in">
             {HERO_PROFILES.map((p, i) => {
-              const positions = [
+              const pos = [
                 { top: "0%",  left: "10%", rotate: "-3deg", scale: 1    },
-                { top: "0%",  right: "0%", rotate: "4deg",  scale: 0.95 },
-                { top: "35%", left: "0%",  rotate: "-2deg", scale: 0.92 },
-                { top: "35%", right: "5%", rotate: "3deg",  scale: 0.98 },
-                { top: "65%", left: "15%", rotate: "2deg",  scale: 0.9  },
+                { top: "0%",  right: "0%", rotate:  "4deg", scale: 0.95 },
+                { top: "35%", left:  "0%", rotate: "-2deg", scale: 0.92 },
+                { top: "35%", right: "5%", rotate:  "3deg", scale: 0.98 },
+                { top: "65%", left: "15%", rotate:  "2deg", scale: 0.9  },
                 { top: "65%", right: "2%", rotate: "-4deg", scale: 0.88 },
-              ];
-              const pos = positions[i];
+              ][i];
               return (
                 <div key={p.name} className="glass" style={{
                   position: "absolute", ...pos,
                   transform: `rotate(${pos.rotate}) scale(${pos.scale})`,
-                  borderRadius: "var(--radius-lg)", padding: "12px", width: 148,
+                  borderRadius: "var(--radius-lg)", padding: 12, width: 148,
                   transition: "transform 0.3s ease",
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(0deg) scale(1.04)`; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "rotate(0deg) scale(1.04)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`; }}
                 >
-                  {/* Solid colour avatar — no gradient */}
                   <div className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center relative overflow-hidden"
                     style={{ backgroundColor: p.colour }}>
-                    <span className="text-white font-black select-none" style={{ fontSize: 40, opacity: 0.22 }}>
-                      {p.name[0]}
-                    </span>
-                    {p.online && (
-                      <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400 ring-1 ring-white/20" />
-                    )}
+                    <span className="text-white font-black select-none" style={{ fontSize: 40, opacity: 0.22 }}>{p.name[0]}</span>
+                    {p.online && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400" />}
                   </div>
-                  <div style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{p.name}, {p.age}</div>
-                  <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{p.city}</div>
-                  {p.verified && (
-                    <div className="flex items-center gap-1 mt-1.5">
-                      <span style={{ fontSize: 10, color: "#60A5FA", fontWeight: 600 }}>✓ Verified</span>
-                    </div>
-                  )}
+                  <p style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{p.name}, {p.age}</p>
+                  <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{p.city}</p>
+                  {p.verified && <p style={{ fontSize: 10, color: "#60A5FA", fontWeight: 600, marginTop: 4 }}>✓ Verified</p>}
                 </div>
               );
             })}
@@ -197,20 +218,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* ── Features — Change 21: removed "Why Kenyandates" badge pill ── */}
       <section id="features" style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
-          <div className="badge badge-pink" style={{ marginBottom: 16, display: "inline-flex" }}><Shield size={12} /> Why Kenyandates</div>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700, marginBottom: 16 }}>
+          {/* No badge/pill — just heading */}
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px,4vw,56px)", fontWeight: 700, marginBottom: 16 }}>
             Built for <span className="gradient-text">Kenya</span>
           </h2>
-          <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 500, margin: "0 auto" }}>Everything you need for safe, genuine connections — designed for our culture.</p>
+          <p style={{ fontSize: 17, color: "var(--text-secondary)", maxWidth: 500, margin: "0 auto" }}>
+            Everything you need for safe, genuine connections — designed for our culture.
+          </p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {FEATURES.map((f, i) => (
-            <div key={f.title} className="card" style={{ padding: 32, transition: "all 0.3s ease", animationDelay: `${i * 0.1}s` }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)"; (e.currentTarget as HTMLElement).style.borderColor = "var(--border-accent)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
+            <div key={f.title} className="card" style={{ padding: 32, transition: "all 0.3s ease" }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
             >
               <div style={{ width: 52, height: 52, borderRadius: "var(--radius-md)", background: `${f.color}20`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
                 <f.icon size={24} color={f.color} />
@@ -222,20 +245,20 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section id="how-it-works" style={{ padding: "100px 24px", background: "var(--bg-surface)", position: "relative", overflow: "hidden" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
+      {/* ── How It Works — Change 21: removed "Your Journey" badge pill ── */}
+      <section id="how-it-works" style={{ padding: "100px 24px", background: "var(--bg-surface)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
-            <div className="badge badge-pink" style={{ marginBottom: 16, display: "inline-flex" }}><Heart size={12} /> Your Journey</div>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700 }}>How It Works</h2>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px,4vw,56px)", fontWeight: 700 }}>
+              How It Works
+            </h2>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32 }}>
-            {STEPS.map((s, i) => (
-              <div key={s.step} style={{ textAlign: "center", position: "relative" }}>
-                {i < STEPS.length - 1 && (
-                  <div style={{ position: "absolute", top: 40, left: "60%", width: "80%", height: 1, background: "var(--border)", display: "none" }} />
-                )}
-                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(232,51,109,0.15)", border: "2px solid var(--border-accent)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 36, margin: "0 auto 20px" }}>
+            {STEPS.map(s => (
+              <div key={s.step} style={{ textAlign: "center" }}>
+                <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(232,51,109,0.12)",
+                  border: "2px solid var(--border-accent)", display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: 36, margin: "0 auto 20px" }}>
                   {s.icon}
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-primary)", marginBottom: 8, letterSpacing: 2 }}>STEP {s.step}</div>
@@ -247,11 +270,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* ── Pricing — Change 22: removed "Membership" badge pill ── */}
       <section id="pricing" style={{ padding: "100px 24px", maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 64 }}>
-          <div className="badge badge-gold" style={{ marginBottom: 16, display: "inline-flex" }}><Crown size={12} /> Membership</div>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700, marginBottom: 16 }}>Choose Your Plan</h2>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px,4vw,56px)", fontWeight: 700, marginBottom: 16 }}>
+            Choose Your Plan
+          </h2>
           <p style={{ fontSize: 17, color: "var(--text-secondary)" }}>Start free. Upgrade when you&apos;re ready.</p>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24 }}>
@@ -260,14 +284,16 @@ export default function LandingPage() {
               borderRadius: "var(--radius-xl)", padding: 32, position: "relative",
               background: plan.popular ? "rgba(232,51,109,0.06)" : "var(--bg-card)",
               border: plan.popular ? "2px solid var(--accent-primary)" : "1px solid var(--border)",
-              transition: "all 0.3s ease"
+              transition: "all 0.3s ease",
             }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-8px)"; }}
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
             >
               {plan.popular && (
-                <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)", background: "var(--gradient-primary)", borderRadius: "var(--radius-full)", padding: "4px 16px", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
-                  ✨ Most Popular
+                <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
+                  background: "var(--gradient-primary)", borderRadius: "var(--radius-full)",
+                  padding: "4px 16px", fontSize: 12, fontWeight: 700, whiteSpace: "nowrap" }}>
+                  Most Popular
                 </div>
               )}
               <div style={{ marginBottom: 24 }}>
@@ -281,7 +307,8 @@ export default function LandingPage() {
               <ul style={{ listStyle: "none", marginBottom: 32, display: "flex", flexDirection: "column", gap: 12 }}>
                 {plan.features.map(f => (
                   <li key={f} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "var(--text-secondary)" }}>
-                    <div style={{ width: 20, height: 20, borderRadius: "50%", background: plan.gradient || "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
+                      background: plan.gradient || "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <Check size={11} color={plan.textColor} />
                     </div>
                     {f}
@@ -289,11 +316,10 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Link href="/register" style={{
-                display: "block", textAlign: "center", padding: "14px", borderRadius: "var(--radius-full)",
+                display: "block", textAlign: "center", padding: 14, borderRadius: "var(--radius-full)",
                 background: plan.gradient || "var(--bg-elevated)", color: plan.textColor || "white",
                 fontWeight: 700, fontSize: 14, textDecoration: "none",
                 border: plan.gradient ? "none" : "1px solid var(--border)",
-                transition: "all 0.2s"
               }}>
                 {plan.cta}
               </Link>
@@ -305,12 +331,13 @@ export default function LandingPage() {
         </p>
       </section>
 
-      {/* Testimonials */}
+      {/* ── Stories — Change 23: removed "Success Stories" badge pill ── */}
       <section id="stories" style={{ padding: "100px 24px", background: "var(--bg-surface)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 64 }}>
-            <div className="badge badge-success" style={{ marginBottom: 16, display: "inline-flex" }}><Users size={12} /> Success Stories</div>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700 }}>Real Love Stories</h2>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(36px,4vw,56px)", fontWeight: 700 }}>
+              Real Love Stories
+            </h2>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
             {TESTIMONIALS.map(t => (
@@ -320,7 +347,10 @@ export default function LandingPage() {
                 </div>
                 <p style={{ fontSize: 16, color: "var(--text-secondary)", lineHeight: 1.8, marginBottom: 24, fontStyle: "italic" }}>&ldquo;{t.text}&rdquo;</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#C2185B", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "white" }}>{t.name[0]}</div>
+                  <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#C2185B",
+                    display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "white" }}>
+                    {t.name[0]}
+                  </div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{t.city}</div>
@@ -332,52 +362,57 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CTA Banner */}
+      {/* CTA */}
       <section style={{ padding: "100px 24px" }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <div style={{ width: 80, height: 80, borderRadius: "50%", background: "rgba(232,51,109,0.15)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 32px", fontSize: 40 }} className="animate-pulse-glow">
-            💘
-          </div>
           <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 700, marginBottom: 20 }}>
             Ready to Find Your <span className="gradient-text">Match?</span>
           </h2>
           <p style={{ fontSize: 18, color: "var(--text-secondary)", marginBottom: 40, lineHeight: 1.7 }}>
-            Join 50,000+ verified singles across Kenya. Create your free profile and get 150 Coins to start your journey.
+            Join 50,000+ verified singles across Kenya. Create your free profile and get 150 Coins to start.
           </p>
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/register" className="btn-primary" style={{ fontSize: 17, padding: "18px 48px" }}>
-              Join Free — Get 150 Coins <Coins size={18} />
-            </Link>
-          </div>
-          <p style={{ marginTop: 16, fontSize: 13, color: "var(--text-muted)" }}>No credit card required. Face verified in minutes.</p>
+          <Link href="/register" className="btn-primary" style={{ fontSize: 17, padding: "18px 48px" }}>
+            Join Free — Get 150 Coins <Coins size={18} />
+          </Link>
+          <p style={{ marginTop: 16, fontSize: 13, color: "var(--text-muted)" }}>No credit card required.</p>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── Footer — Change 25: all links go to real pages or coming-soon ── */}
       <footer style={{ background: "var(--bg-surface)", borderTop: "1px solid var(--border)", padding: "48px 24px 32px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 40, marginBottom: 48 }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: "#E8336D", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Heart size={16} fill="white" color="white" />
                 </div>
                 <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700 }}>Kenyandates</span>
               </div>
-              <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.7 }}>Real People. Real Connections. Kenya&apos;s most trusted dating platform.</p>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.7 }}>
+                Real People. Real Connections. Kenya&apos;s most trusted dating platform.
+              </p>
             </div>
-            {[
-              { title: "Platform", links: ["Features", "How It Works", "Pricing", "Download App"] },
-              { title: "Company", links: ["About Us", "Success Stories", "Blog", "Careers"] },
-              { title: "Legal", links: ["Privacy Policy", "Terms of Service", "Community Guidelines", "Cookie Policy"] },
-            ].map(col => (
-              <div key={col.title}>
-                <h4 style={{ fontWeight: 700, marginBottom: 16, fontSize: 14 }}>{col.title}</h4>
+            {Object.entries(FOOTER_LINKS).map(([col, links]) => (
+              <div key={col}>
+                <h4 style={{ fontWeight: 700, marginBottom: 16, fontSize: 14 }}>{col}</h4>
                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-                  {col.links.map(l => (
-                    <li key={l}><a href="#" style={{ fontSize: 14, color: "var(--text-muted)", textDecoration: "none", transition: "color 0.2s" }}
-                      onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-secondary)")}
-                      onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>{l}</a></li>
+                  {Object.entries(links).map(([label, href]) => (
+                    <li key={label}>
+                      {href.startsWith("#") ? (
+                        <a href={href} style={{ fontSize: 14, color: "var(--text-muted)", textDecoration: "none", transition: "color 0.2s" }}
+                          onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-secondary)")}
+                          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
+                          {label}
+                        </a>
+                      ) : (
+                        <Link href={href} style={{ fontSize: 14, color: "var(--text-muted)", textDecoration: "none", transition: "color 0.2s" }}
+                          onMouseEnter={e => (e.currentTarget.style.color = "var(--accent-secondary)")}
+                          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-muted)")}>
+                          {label}
+                        </Link>
+                      )}
+                    </li>
                   ))}
                 </ul>
               </div>
