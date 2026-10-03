@@ -46,7 +46,7 @@ export default function LoginPage() {
       }
 
       login(data.token, data.user);
-      router.push("/app");
+      // AuthContext.login() handles redirect — ADMIN → /admin, USER → /app
     } catch (err: any) {
       setError(err.message);
     } finally {
