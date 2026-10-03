@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
+import AppShell from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: "KenyaDates — Real People. Real Connections.",
@@ -58,14 +59,9 @@ export default function RootLayout({
       </head>
       <body>
         <AuthProvider>
-          {/*
-            md:pl-[72px] — offset for the desktop side nav (72px wide, rendered by BottomNav)
-            The landing page (/) and auth pages don't show the nav so the offset
-            has no visual effect there — BottomNav returns null for those routes.
-          */}
-          <div className="md:pl-[72px]">
+          <AppShell>
             {children}
-          </div>
+          </AppShell>
           <BottomNav />
         </AuthProvider>
       </body>

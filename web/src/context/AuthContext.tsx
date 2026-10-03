@@ -56,7 +56,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(newUser);
     localStorage.setItem('kd_token', newToken);
     localStorage.setItem('kd_user', JSON.stringify(newUser));
-    router.push('/app'); // Redirect to dashboard
+    // Admins go to the admin panel, regular users go to the app
+    if (newUser.role === 'ADMIN' || newUser.role === 'MODERATOR') {
+      router.push('/admin');
+    } else {
+      router.push('/app');
+    }
   };
 
   const logout = () => {

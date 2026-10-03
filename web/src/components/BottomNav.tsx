@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { href: "/profile", icon: User, label: "Profile" },
 ];
 
-const HIDDEN_ROUTES = ["/login", "/register", "/verify-email", "/verify", "/call"];
+const HIDDEN_ROUTES = ["/login", "/register", "/verify-email", "/verify", "/call", "/admin"];
 
 export default function BottomNav() {
   const pathname = usePathname();
