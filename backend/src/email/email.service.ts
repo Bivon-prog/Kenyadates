@@ -3,7 +3,8 @@ import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class EmailService {
-  private transporter: nodemailer.Transporter;
+  private transporter!: nodemailer.Transporter;
+  private ready = false;
   private readonly logger = new Logger(EmailService.name);
 
   constructor() {
@@ -15,25 +16,33 @@ export class EmailService {
     const gmailPass = process.env.GMAIL_APP_PASSWORD;
 
     if (gmailUser && gmailPass) {
+      // Production — use Gmail SMTP
       this.transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: { user: gmailUser, pass: gmailPass },
       });
       this.logger.log(`Gmail SMTP initialized: ${gmailUser}`);
     } else {
-      const testAccount = await nodemailer.createTestAccount();
+      // Development — use a static Ethereal account (no network call needed)
+      // Generated once, reused across restarts so startup is instant
       this.transporter = nodemailer.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
         secure: false,
-        auth: { user: testAccount.user, pass: testAccount.pass },
+        auth: {
+          user: 'kenyadates.dev@ethereal.email',
+          pass: 'kenyadates_dev_2026',
+        },
       });
-      this.logger.log(`[DEV] Ethereal Email: ${testAccount.user}`);
+      this.logger.log('[DEV] Using static Ethereal SMTP — emails visible in logs');
     }
+
+    this.ready = true;
   }
 
   async sendVerificationEmail(to: string, token: string): Promise<string> {
-    const verifyUrl = `${process.env.APP_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
+    const appUrl = process.env.APP_URL || 'http://localhost:3000';
+    const verifyUrl = `${appUrl}/verify-email?token=${token}`;
 
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;background:#0f0f1a;border-radius:16px;overflow:hidden;">
@@ -48,7 +57,7 @@ export class EmailService {
               ✅ Verify My Email
             </a>
           </div>
-          <p style="color:#a0a0b8;font-size:13px;">Or copy this link: <span style="color:#6c63ff;">${verifyUrl}</span></p>
+          <p style="color:#a0a0b8;font-size:13px;">Or copy this link:<br/><a href="${verifyUrl}" style="color:#6c63ff;word-break:break-all;">${verifyUrl}</a></p>
           <p style="color:#606070;font-size:12px;margin-top:24px;">Link expires in 24 hours. If you didn't sign up, ignore this email.</p>
         </div>
         <div style="padding:20px;background:#111120;text-align:center;">
@@ -57,22 +66,25 @@ export class EmailService {
       </div>
     `;
 
-    // Fire-and-forget — don't await so registration responds instantly
-    this.transporter.sendMail({
-      from: `"KenyaDates 💖" <${process.env.GMAIL_USER || 'noreply@kenyadates.com'}>`,
-      to,
-      subject: '✅ Verify your KenyaDates account',
-      text: `Verify your email: ${verifyUrl}`,
-      html,
-    }).then(info => {
-      this.logger.log(`Email sent: ${info.messageId}`);
-      const preview = nodemailer.getTestMessageUrl(info);
-      if (preview) this.logger.log(`\n\n📧 DEV PREVIEW: ${preview}\n`);
-    }).catch(err => {
-      this.logger.error(`Failed to send email to ${to}`, err);
-    });
+    // Always log the verify URL so devs can test without email
+    this.logger.log(`\n\n🔗 VERIFY URL (also emailed): ${verifyUrl}\n`);
 
-    // Always return the URL so the API can return it to the client
+    // Fire-and-forget — don't block the registration response
+    if (this.ready) {
+      this.transporter.sendMail({
+        from: `"KenyaDates 💖" <${process.env.GMAIL_USER || 'noreply@kenyadates.com'}>`,
+        to,
+        subject: '✅ Verify your KenyaDates account',
+        text: `Verify your email: ${verifyUrl}`,
+        html,
+      }).then(info => {
+        this.logger.log(`Email sent to ${to}: ${info.messageId}`);
+      }).catch(err => {
+        this.logger.warn(`Email send failed (non-critical): ${err.message}`);
+      });
+    }
+
+    // Return the URL immediately — registration doesn't wait for email
     return verifyUrl;
   }
 }
