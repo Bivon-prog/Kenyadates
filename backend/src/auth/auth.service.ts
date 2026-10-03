@@ -22,8 +22,13 @@ export class AuthService {
     displayName: string;
     age: number;
     gender: string;
+    seeking?: string;
+    goal?: string;
+    bio?: string;
+    interests?: string[];
     city: string;
     county: string;
+    tribe?: string;
   }) {
     // Check if email already exists
     const existingEmail = await this.prisma.user.findUnique({
@@ -60,6 +65,9 @@ export class AuthService {
             gender: dto.gender,
             city: dto.city,
             county: dto.county,
+            bio: dto.bio || null,
+            interests: dto.interests || [],
+            tribe: dto.tribe || null,
           },
         },
       },
