@@ -57,20 +57,20 @@ export class EmailService {
       </div>
     `;
 
-    try {
-      const info = await this.transporter.sendMail({
-        from: `"KenyaDates 💖" <${process.env.GMAIL_USER || 'noreply@kenyadates.com'}>`,
-        to,
-        subject: '✅ Verify your KenyaDates account',
-        text: `Verify your email: ${verifyUrl}`,
-        html,
-      });
+    // Fire-and-forget — don't await so registration responds instantly
+    this.transporter.sendMail({
+      from: `"KenyaDates 💖" <${process.env.GMAIL_USER || 'noreply@kenyadates.com'}>`,
+      to,
+      subject: '✅ Verify your KenyaDates account',
+      text: `Verify your email: ${verifyUrl}`,
+      html,
+    }).then(info => {
       this.logger.log(`Email sent: ${info.messageId}`);
       const preview = nodemailer.getTestMessageUrl(info);
       if (preview) this.logger.log(`\n\n📧 DEV PREVIEW: ${preview}\n`);
-    } catch (err) {
+    }).catch(err => {
       this.logger.error(`Failed to send email to ${to}`, err);
-    }
+    });
 
     // Always return the URL so the API can return it to the client
     return verifyUrl;
