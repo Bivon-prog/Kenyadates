@@ -18,26 +18,29 @@ interface Message {
   createdAt: string;
 }
 
-// Avatar for gradient placeholders
+// Avatar — handles solid:, real photo, or initials fallback
 function Avatar({ photos, name, size = 40 }: { photos?: string[]; name?: string; size?: number }) {
   const photo = photos?.[0] ?? "";
-  if (photo.startsWith("gradient:")) {
+  if (photo.startsWith("solid:")) {
     return (
-      <div
-        className={`rounded-full bg-gradient-to-br ${photo.replace("gradient:", "")} flex items-center justify-center font-bold text-white flex-shrink-0`}
-        style={{ width: size, height: size, fontSize: size * 0.38 }}
-      >
+      <div className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
+        style={{ width: size, height: size, background: photo.replace("solid:", ""), fontSize: size * 0.38 }}>
         {name?.[0]?.toUpperCase() ?? "?"}
       </div>
     );
   }
+  if (photo && !photo.startsWith("gradient:")) {
+    return (
+      <img src={photo} className="rounded-full object-cover flex-shrink-0"
+        style={{ width: size, height: size }} alt={name} />
+    );
+  }
+  // Initials fallback — no gradient, just a neutral dark background
   return (
-    <img
-      src={photo || `https://ui-avatars.com/api/?name=${name}&background=E8336D&color=fff`}
-      className="rounded-full object-cover flex-shrink-0"
-      style={{ width: size, height: size }}
-      alt={name}
-    />
+    <div className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
+      style={{ width: size, height: size, background: "#1E1E2E", border: "1px solid rgba(255,255,255,0.1)", fontSize: size * 0.38 }}>
+      {name?.[0]?.toUpperCase() ?? "?"}
+    </div>
   );
 }
 
@@ -193,7 +196,7 @@ export default function ChatPage() {
 
   // Fallback name/photo for mock
   const displayName = otherProfile?.displayName ?? "Amina";
-  const displayPhotos = otherProfile?.photos ?? ["gradient:from-pink-500 to-rose-500"];
+  const displayPhotos = otherProfile?.photos ?? ["solid:#C2185B"];
 
   return (
     <div className="flex flex-col bg-[#0D0D0D] h-[100dvh]">
@@ -253,9 +256,10 @@ export default function ChatPage() {
               <div key={msg.id} className={`flex flex-col ${isMine ? "items-end" : "items-start"}`}>
                 <div
                   className={`max-w-[78%] md:max-w-[60%] px-4 py-2.5 rounded-2xl ${
-                    isMine ? "rounded-br-sm" : "rounded-bl-sm bg-white/8"
+                    isMine
+                      ? "rounded-br-sm bg-[#E8336D] text-white"
+                      : "rounded-bl-sm bg-white/8 text-white"
                   }`}
-                  style={isMine ? { background: `linear-gradient(135deg, ${BRAND}, ${BRAND2})` } : {}}
                 >
                   {isVoice && voiceUrl ? (
                     <audio controls src={voiceUrl} className="max-w-[200px] h-8" />
@@ -328,8 +332,7 @@ export default function ChatPage() {
         <button
           onClick={sendMessage}
           disabled={!input.trim()}
-          className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 hover:opacity-90 active:scale-95"
-          style={{ background: `linear-gradient(135deg, ${BRAND}, ${BRAND2})` }}
+          className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-30 hover:opacity-90 active:scale-95 bg-[#E8336D]"
         >
           <Send className="w-4 h-4 text-white" />
         </button>

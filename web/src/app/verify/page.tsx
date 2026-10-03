@@ -85,11 +85,8 @@ export default function VerifyPage() {
           {/* ── Intro ── */}
           {step === "intro" && (
             <>
-              <div
-                className="w-24 h-24 rounded-full flex items-center justify-center mx-auto shadow-2xl"
-                style={{ background: `linear-gradient(135deg, ${BRAND}, ${BRAND_SECONDARY})`, boxShadow: `0 20px 60px ${BRAND}40` }}
-              >
-                <Camera className="w-12 h-12 text-white" />
+              <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto bg-[#E8336D]/10 border border-[#E8336D]/20">
+                <Camera className="w-10 h-10 text-[#E8336D]" />
               </div>
               <div>
                 <h1 className="text-3xl font-black mb-2">Get Verified ✅</h1>
@@ -141,10 +138,10 @@ export default function VerifyPage() {
               </div>
               <button
                 onClick={takeSelfie}
-                className="w-20 h-20 rounded-full bg-white border-4 flex items-center justify-center mx-auto hover:scale-105 transition-transform active:scale-95 shadow-2xl"
-                style={{ borderColor: BRAND, boxShadow: `0 0 30px ${BRAND}50` }}
+                className="w-18 h-18 rounded-full bg-white border-4 flex items-center justify-center mx-auto hover:scale-105 transition-transform active:scale-95"
+                style={{ width: 72, height: 72, borderColor: BRAND }}
               >
-                <div className="w-14 h-14 rounded-full" style={{ background: BRAND }} />
+                <div className="w-12 h-12 rounded-full" style={{ background: BRAND }} />
               </button>
               <p className="text-white/35 text-xs">Tap the button to capture</p>
             </>

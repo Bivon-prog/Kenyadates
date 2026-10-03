@@ -4,10 +4,13 @@ import React, { useState } from "react";
 import { Sparkles, Crown, Lock } from "lucide-react";
 import Link from "next/link";
 
+const SOLID_COLOURS = ["#C2185B", "#1565C0", "#4527A0", "#00695C", "#E65100"];
+
 const MOCK_LIKES = Array.from({ length: 9 }, (_, i) => ({
   id: i,
-  bg: ["from-pink-500 to-rose-600", "from-purple-500 to-indigo-600", "from-amber-500 to-orange-600", "from-teal-500 to-cyan-600", "from-blue-500 to-violet-600"][i % 5],
+  colour: SOLID_COLOURS[i % 5],
   city: ["Nairobi", "Mombasa", "Kisumu", "Eldoret", "Nakuru"][i % 5],
+  initial: ["A", "J", "F", "K", "G", "W", "B", "E", "N"][i],
 }));
 
 export default function LikesPage() {
@@ -48,25 +51,25 @@ export default function LikesPage() {
       <div className="px-4 md:px-8 max-w-2xl mx-auto">
         <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
           {MOCK_LIKES.map(p => (
-            <div
-              key={p.id}
-              className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#1A1A2E] border border-white/5 cursor-pointer group"
-            >
-              {/* Blurred gradient background */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${p.bg} opacity-70`} />
-
-              {/* Blur overlay */}
-              <div className="absolute inset-0 backdrop-blur-xl bg-black/30" />
-
-              {/* Lock icon */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-                <Lock className="w-7 h-7 text-white/40" />
-                <span className="text-white/40 text-[10px] font-medium">{p.city}</span>
+            <div key={p.id}
+              className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#111118] border border-white/6 cursor-pointer group">
+              {/* Solid colour background, blurred */}
+              <div className="absolute inset-0 flex items-center justify-center"
+                style={{ backgroundColor: p.colour }}>
+                <span className="text-white font-black select-none" style={{ fontSize: 64, opacity: 0.2 }}>
+                  {p.initial}
+                </span>
               </div>
-
-              {/* Hover hint */}
-              <div className="absolute inset-0 bg-[#E8336D]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Crown className="w-6 h-6 text-yellow-400" />
+              {/* Blur overlay */}
+              <div className="absolute inset-0 backdrop-blur-lg bg-black/25" />
+              {/* Lock */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                <Lock className="w-6 h-6 text-white/35" />
+                <span className="text-white/35 text-[10px] font-medium">{p.city}</span>
+              </div>
+              {/* Hover */}
+              <div className="absolute inset-0 bg-[#E8336D]/15 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Crown className="w-5 h-5 text-yellow-400" />
               </div>
             </div>
           ))}
