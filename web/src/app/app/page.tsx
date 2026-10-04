@@ -202,7 +202,7 @@ export default function AppHomePage() {
         </Link>
       </aside>
 
-      <main className="lg:pl-52 min-h-screen pb-24 md:pb-6">
+      <main className="lg:pl-52 min-h-screen page-pb">
         <div className="max-w-4xl mx-auto px-4 md:px-6 py-5">
 
           {/* Header */}
@@ -312,3 +312,4 @@ export default function AppHomePage() {
     </div>
   );
 }
+

@@ -58,36 +58,28 @@ export default function VerifyEmailPage() {
   }, [token, isAuthenticated, router]);
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, position: "relative" }}>
-      <div style={{ position: "fixed", top: "-10%", right: "-10%", width: 500, height: 500, background: "rgba(232,51,109,0.08)", borderRadius: "50%", filter: "blur(100px)" }} />
-      <div style={{ position: "fixed", bottom: "-10%", left: "-10%", width: 400, height: 400, background: "rgba(108,99,255,0.06)", borderRadius: "50%", filter: "blur(80px)" }} />
-
-      <div className="glass animate-fade-in" style={{ width: "100%", maxWidth: 440, borderRadius: "var(--radius-xl)", padding: 40, textAlign: "center", position: "relative" }}>
-        
-        <div style={{ display: "inline-flex", marginBottom: 24 }}>
-          {status === "loading" && <Loader2 size={64} color="var(--accent-primary)" className="animate-spin" />}
-          {status === "success" && <CheckCircle size={64} color="var(--color-success)" />}
-          {status === "error" && <XCircle size={64} color="var(--color-error)" />}
+    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center p-6">
+      <div className="w-full max-w-sm text-center animate-fade-in">
+        <div className="mb-6 flex justify-center">
+          {status === "loading" && <Loader2 size={64} color="#E8336D" className="animate-spin" />}
+          {status === "success" && <CheckCircle size={64} color="#4CAF82" />}
+          {status === "error" && <XCircle size={64} color="#FF4B6E" />}
         </div>
-
-        <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>
-          {status === "loading" && "Verifying..."}
+        <h1 className="text-2xl font-black text-white mb-3">
+          {status === "loading" && "Verifying…"}
           {status === "success" && "Email Verified! 🎉"}
           {status === "error" && "Verification Failed"}
         </h1>
-        
-        <p style={{ color: "var(--text-secondary)", fontSize: 15, marginBottom: 32, lineHeight: 1.5 }}>
-          {message}
-        </p>
-
+        <p className="text-white/50 text-base mb-8 leading-relaxed">{message}</p>
         {status === "success" && (
-          <button onClick={() => router.push(isAuthenticated ? "/app" : "/login")} className="btn-primary" style={{ width: "100%", padding: 16, fontSize: 16 }}>
-            {isAuthenticated ? "Go to Dashboard" : "Sign In to Continue"}
+          <button onClick={() => router.push(isAuthenticated ? "/app" : "/login")}
+            className="btn-primary w-full py-4 text-base">
+            {isAuthenticated ? "Go to App" : "Sign In"}
           </button>
         )}
-
         {status === "error" && (
-          <button onClick={() => router.push("/register")} className="btn-secondary" style={{ width: "100%", padding: 16, fontSize: 16 }}>
+          <button onClick={() => router.push("/register")}
+            className="btn-secondary w-full py-4 text-base">
             Back to Sign Up
           </button>
         )}

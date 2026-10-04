@@ -117,7 +117,7 @@ export default function ProfilePage() {
 
   return (
     /* Extra bottom padding so Sign Out is always visible above the nav bar */
-    <div className="min-h-screen bg-[#0D0D0D] text-white pb-36 md:pb-12">
+    <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
 
       {/* Toast */}
       {toast && (
@@ -387,3 +387,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+

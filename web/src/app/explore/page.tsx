@@ -26,7 +26,7 @@ export default function ExplorePage() {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white pb-28 md:pb-8">
+    <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
 
       {/* Header */}
       <div className="px-5 pt-6 pb-5">
@@ -135,3 +135,4 @@ export default function ExplorePage() {
     </div>
   );
 }
+

@@ -17,7 +17,7 @@ export default function LikesPage() {
   const [activeTab, setActiveTab] = useState("recent");
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white pb-36 md:pb-12">
+    <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
 
       {/* ── Header ── */}
       <div className="px-5 pt-6 pb-3">
@@ -100,3 +100,4 @@ export default function LikesPage() {
     </div>
   );
 }
+

@@ -280,46 +280,33 @@ export default function DiscoverPage() {
 
       {/* ── Action buttons ── */}
       {currentProfile && (
-        <div className="flex-shrink-0 flex items-center justify-center gap-3 px-6 pb-24 md:pb-6 pt-2">
+        <div className="flex-shrink-0 flex items-center justify-center gap-3 px-4 pt-2 pb-safe"
+          style={{ paddingBottom: "max(24px, env(safe-area-inset-bottom))" }}>
           {/* Undo */}
-          <button
-            onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
-            className="w-11 h-11 rounded-full bg-[#1A1A2E] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all active:scale-95"
-          >
-            <RotateCcw className="w-4 h-4 text-yellow-400" />
+          <button onClick={() => setCurrentIndex(i => Math.max(0, i - 1))}
+            className="w-12 h-12 rounded-full bg-[#1A1A2E] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all active:scale-95">
+            <RotateCcw className="w-5 h-5 text-yellow-400" />
           </button>
-
           {/* Pass */}
-          <button
-            onClick={() => handleSwipe("left")}
-            className="w-16 h-16 rounded-full bg-[#1A1A2E] border border-red-500/40 flex items-center justify-center hover:bg-red-500/10 transition-all hover:scale-105 active:scale-95 shadow-lg"
-          >
+          <button onClick={() => handleSwipe("left")}
+            className="w-16 h-16 rounded-full bg-[#1A1A2E] border border-red-500/40 flex items-center justify-center hover:bg-red-500/10 transition-all active:scale-95 shadow-lg">
             <X className="w-8 h-8 text-red-400" strokeWidth={2.5} />
           </button>
-
           {/* Super like */}
-          <button
-            onClick={() => handleSwipe("super")}
-            className="w-13 h-13 rounded-full bg-[#1A1A2E] border border-blue-400/40 flex items-center justify-center hover:bg-blue-400/10 transition-all hover:scale-105 active:scale-95"
-            style={{ width: 52, height: 52 }}
-          >
+          <button onClick={() => handleSwipe("super")}
+            className="rounded-full bg-[#1A1A2E] border border-blue-400/40 flex items-center justify-center hover:bg-blue-400/10 transition-all active:scale-95"
+            style={{ width: 52, height: 52 }}>
             <Star className="w-5 h-5 text-blue-400 fill-blue-400/50" />
           </button>
-
           {/* Like */}
-          <button
-            onClick={() => handleSwipe("right")}
-            className="w-16 h-16 rounded-full border flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg"
-            style={{ background: "rgba(232,51,109,0.1)", borderColor: "rgba(232,51,109,0.5)" }}
-          >
+          <button onClick={() => handleSwipe("right")}
+            className="w-16 h-16 rounded-full border flex items-center justify-center transition-all active:scale-95 shadow-lg"
+            style={{ background: "rgba(232,51,109,0.1)", borderColor: "rgba(232,51,109,0.5)" }}>
             <Heart className="w-8 h-8" style={{ color: BRAND, fill: `${BRAND}60` }} />
           </button>
-
           {/* Boost */}
-          <button
-            className="w-11 h-11 rounded-full bg-[#1A1A2E] border border-purple-400/40 flex items-center justify-center hover:bg-purple-400/10 transition-all active:scale-95"
-          >
-            <Zap className="w-4 h-4 text-purple-400" />
+          <button className="w-12 h-12 rounded-full bg-[#1A1A2E] border border-purple-400/40 flex items-center justify-center hover:bg-purple-400/10 transition-all active:scale-95">
+            <Zap className="w-5 h-5 text-purple-400" />
           </button>
         </div>
       )}

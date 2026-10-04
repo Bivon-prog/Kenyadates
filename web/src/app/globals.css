@@ -58,7 +58,12 @@ body {
   overflow-x: hidden;
 }
 
-/* Scrollbar */
+/* ── Base layout variables ── */
+:root {
+  --nav-h: 68px;        /* mobile bottom nav height */
+  --safe-b: max(16px, env(safe-area-inset-bottom));
+  --page-pb: calc(var(--nav-h) + var(--safe-b) + 16px); /* guaranteed space above nav */
+}
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 4px; }
@@ -328,4 +333,19 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Page bottom padding — ensures content clears the mobile bottom nav ── */
+.page-pb {
+  padding-bottom: calc(72px + max(16px, env(safe-area-inset-bottom)) + 16px);
+}
+
+/* On desktop (side nav, no bottom nav) less padding needed */
+@media (min-width: 768px) {
+  .page-pb { padding-bottom: 32px; }
+}
+
+/* Input touch size — minimum 48px tap targets on mobile */
+@media (max-width: 767px) {
+  .input { font-size: 16px; } /* prevents iOS zoom on focus */
 }

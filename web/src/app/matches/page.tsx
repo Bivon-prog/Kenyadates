@@ -79,7 +79,7 @@ export default function MatchesPage() {
   const conversations = filtered.filter(m => m.messages.length > 0);
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white pb-28 md:pb-8">
+    <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
 
       {/* ── Header + search ── */}
       <div className="sticky top-0 z-10 bg-[#0D0D0D]/95 backdrop-blur-md border-b border-white/8 px-5 pt-6 pb-4">
@@ -186,3 +186,4 @@ export default function MatchesPage() {
     </div>
   );
 }
+

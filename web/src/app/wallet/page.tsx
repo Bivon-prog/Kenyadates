@@ -109,7 +109,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] text-white pb-24 md:pb-6">
+    <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
 
       {/* Toast */}
       {toast && (
@@ -273,3 +273,4 @@ export default function WalletPage() {
     </div>
   );
 }
+

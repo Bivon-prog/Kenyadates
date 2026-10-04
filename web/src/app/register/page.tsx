@@ -143,8 +143,22 @@ export default function RegisterPage() {
 
       // If backend returns a token, auto-login immediately — no email verify step needed
       if (data.token && data.user) {
+        // Upload any selected photos before redirecting
+        if (photoFiles.filter(Boolean).length > 0) {
+          const token = data.token;
+          for (const file of photoFiles.filter(Boolean)) {
+            try {
+              const fd = new FormData();
+              fd.append("file", file);
+              await fetch(`${API}/users/upload-photo`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` },
+                body: fd,
+              });
+            } catch { /* non-critical */ }
+          }
+        }
         login(data.token, data.user);
-        // login() redirects to /app automatically
         return;
       }
 
