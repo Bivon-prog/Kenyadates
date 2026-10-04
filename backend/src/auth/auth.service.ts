@@ -48,7 +48,7 @@ export class AuthService {
       }
     }
 
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const passwordHash = await bcrypt.hash(dto.password, 8);
     const verificationToken = randomBytes(32).toString('hex');
 
     const user = await this.prisma.user.create({

@@ -124,7 +124,7 @@ export class AdminService {
     const exists = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (exists) throw new BadRequestException('Email already registered');
 
-    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const passwordHash = await bcrypt.hash(dto.password, 8);
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
@@ -307,7 +307,7 @@ export class AdminService {
       await this.prisma.user.update({ where: { email }, data: { role: Role.ADMIN } });
       return { message: `Promoted ${email} to ADMIN` };
     }
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 8);
     const admin = await this.prisma.user.create({
       data: {
         email,
