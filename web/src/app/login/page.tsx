@@ -1,175 +1,121 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Heart, Phone, Mail, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
-  const [method, setMethod] = useState<"phone" | "email">("email");
+  const [method,       setMethod]       = useState<"email"|"phone">("email");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [loading,      setLoading]      = useState(false);
+  const [email,        setEmail]        = useState("");
+  const [phone,        setPhone]        = useState("");
+  const [password,     setPassword]     = useState("");
+  const [error,        setError]        = useState("");
   const { login } = useAuth();
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const identifier = method === "email" ? email : phone;
-    if (!identifier || !password) {
-      setError("Please fill in all fields.");
-      setLoading(false);
-      return;
-    }
-
+    setLoading(true); setError("");
+    const id = method === "email" ? email : phone;
+    if (!id || !password) { setError("Please fill in all fields."); setLoading(false); return; }
     try {
-      const body = method === "email"
-        ? { email: identifier, password }
-        : { phoneNumber: identifier, password };
-
       const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      const res = await fetch(`${API}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
+      const body = method === "email" ? { email: id, password } : { phoneNumber: id, password };
+      const res  = await fetch(`${API}/auth/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || "Invalid credentials");
-      }
-
+      if (!res.ok) throw new Error(data.message || "Invalid credentials");
       login(data.token, data.user);
-      // AuthContext.login() handles redirect — ADMIN → /admin, USER → /app
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err: any) { setError(err.message); }
+    setLoading(false);
   };
 
-  return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+  const inputH = { minHeight: 56, fontSize: 16 };
 
-      <div style={{ width: "100%", maxWidth: 440, position: "relative" }} className="animate-fade-in">
+  return (
+    <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center px-5 py-10">
+      <div className="w-full max-w-md">
         {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", marginBottom: 32 }}>
-            <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--gradient-primary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Heart size={22} fill="white" color="white" />
+        <div className="text-center mb-10">
+          <Link href="/" className="inline-flex items-center gap-3 no-underline mb-6">
+            <div className="w-12 h-12 rounded-2xl bg-[#E8336D] flex items-center justify-center">
+              <Heart size={24} fill="white" color="white" />
             </div>
-            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 700, color: "white" }}>
+            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: "white" }}>
               Kenya<span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>dates</span>
             </span>
           </Link>
-          <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Welcome back 👋</h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: 15 }}>Sign in to continue your journey</p>
+          <h1 className="text-2xl font-black text-white mb-2">Welcome back 👋</h1>
+          <p className="text-white/50 text-base">Sign in to continue</p>
         </div>
 
-        {/* Card */}
-        <div className="glass" style={{ borderRadius: "var(--radius-xl)", padding: 36 }}>
-          {/* Method Toggle */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "var(--bg-primary)", borderRadius: "var(--radius-md)", padding: 4, marginBottom: 28 }}>
-            {[{ id: "email", label: "Email", icon: Mail }, { id: "phone", label: "Phone", icon: Phone }].map(m => (
-              <button key={m.id} onClick={() => { setMethod(m.id as "phone" | "email"); setError(""); }} style={{
-                padding: "10px 16px", borderRadius: "var(--radius-sm)", border: "none", cursor: "pointer", fontWeight: 600, fontSize: 14,
-                background: method === m.id ? "var(--gradient-primary)" : "transparent",
-                color: method === m.id ? "white" : "var(--text-secondary)",
-                transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: 8
-              }}>
-                <m.icon size={15} /> {m.label}
+        <div className="bg-[#111118] border border-white/8 rounded-3xl p-6">
+          {/* Toggle */}
+          <div className="grid grid-cols-2 gap-2 bg-[#0D0D0D] rounded-2xl p-1.5 mb-6">
+            {[{id:"email",label:"Email",icon:Mail},{id:"phone",label:"Phone",icon:Phone}].map(m => (
+              <button key={m.id} onClick={() => { setMethod(m.id as any); setError(""); }}
+                className="flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all"
+                style={{ background: method === m.id ? "var(--gradient-primary)" : "transparent", color: method === m.id ? "white" : "rgba(255,255,255,0.45)" }}>
+                <m.icon size={16} /> {m.label}
               </button>
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {error && (
-              <div style={{ background: "rgba(232,51,109,0.1)", border: "1px solid rgba(232,51,109,0.3)", borderRadius: "var(--radius-md)", padding: "12px 16px", color: "#ff6b9d", fontSize: 14, textAlign: "center" }}>
-                {error}
-              </div>
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-[#ff6b9d] text-sm text-center">{error}</div>
             )}
 
             {method === "email" ? (
               <div>
-                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Email Address</label>
-                <div style={{ position: "relative" }}>
-                  <Mail size={16} style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
-                  <input
-                    className="input"
-                    type="email"
-                    placeholder="you@example.com"
-                    style={{ paddingLeft: 42 }}
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                  />
+                <label className="block text-sm font-semibold text-white/60 mb-2">Email Address</label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-white/35 pointer-events-none" />
+                  <input className="input" type="email" placeholder="you@example.com"
+                    style={{ ...inputH, paddingLeft: 48 }} value={email} onChange={e => setEmail(e.target.value)} required autoComplete="email" />
                 </div>
               </div>
             ) : (
               <div>
-                <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Phone Number</label>
-                <div style={{ position: "relative" }}>
-                  <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)", fontSize: 14 }}>🇰🇪 +254</span>
-                  <input
-                    className="input"
-                    type="tel"
-                    placeholder="7XX XXX XXX"
-                    style={{ paddingLeft: 90 }}
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    required
-                    autoComplete="tel"
-                  />
+                <label className="block text-sm font-semibold text-white/60 mb-2">Phone Number</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/45 text-base pointer-events-none">🇰🇪 +254</span>
+                  <input className="input" type="tel" placeholder="7XX XXX XXX"
+                    style={{ ...inputH, paddingLeft: 100 }} value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" />
                 </div>
               </div>
             )}
 
             <div>
-              <label style={{ fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>Password</label>
-              <div style={{ position: "relative" }}>
-                <input
-                  className="input"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  style={{ paddingRight: 48 }}
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              <label className="block text-sm font-semibold text-white/60 mb-2">Password</label>
+              <div className="relative">
+                <input className="input" type={showPassword ? "text" : "password"} placeholder="Enter your password"
+                  style={{ ...inputH, paddingRight: 52 }} value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
+                <button type="button" onClick={() => setShowPassword(s => !s)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors">
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Link href="/forgot-password" style={{ fontSize: 13, color: "var(--accent-secondary)", textDecoration: "none", fontWeight: 500 }}>Forgot password?</Link>
+            <div className="flex justify-end">
+              <Link href="/forgot-password" className="text-sm text-[#FF6B9D] font-medium no-underline hover:underline">Forgot password?</Link>
             </div>
 
-            <button type="submit" className="btn-primary" style={{ width: "100%", padding: 16, fontSize: 16, opacity: loading ? 0.7 : 1 }} disabled={loading}>
-              {loading ? "Signing in..." : <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>Sign In <ArrowRight size={18} /></span>}
+            <button type="submit" className="btn-primary w-full text-base" style={{ minHeight: 56, opacity: loading ? 0.7 : 1 }} disabled={loading}>
+              {loading ? "Signing in…" : <span className="flex items-center justify-center gap-2">Sign In <ArrowRight size={18} /></span>}
             </button>
           </form>
 
-          <div style={{ textAlign: "center", marginTop: 24 }}>
-            <p style={{ fontSize: 14, color: "var(--text-muted)" }}>
-              Don&apos;t have an account?{" "}
-              <Link href="/register" style={{ color: "var(--accent-secondary)", fontWeight: 700, textDecoration: "none" }}>Join Free</Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-white/45 mt-5">
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-[#FF6B9D] font-bold no-underline">Join Free</Link>
+          </p>
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 24, display: "flex", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-          {["🔒 Secure Login", "✅ Verified Members", "🇰🇪 Made in Kenya"].map(t => (
-            <span key={t} style={{ fontSize: 12, color: "var(--text-muted)" }}>{t}</span>
+        <div className="flex justify-center gap-6 mt-6">
+          {["🔒 Secure","✅ Verified","🇰🇪 Made in Kenya"].map(t => (
+            <span key={t} className="text-xs text-white/30">{t}</span>
           ))}
         </div>
       </div>
