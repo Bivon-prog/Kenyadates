@@ -1,9 +1,11 @@
 "use client";
+
+import { Suspense } from "react";
 import Link from "next/link";
 import { Heart, ArrowLeft } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
-export default function ComingSoonPage() {
+function ComingSoonContent() {
   const params = useSearchParams();
   const page = params.get("page") ?? "This page";
   return (
@@ -20,5 +22,17 @@ export default function ComingSoonPage() {
         <ArrowLeft className="w-4 h-4" /> Back to Home
       </Link>
     </div>
+  );
+}
+
+export default function ComingSoonPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0D0D0D] text-white flex items-center justify-center">
+        <p className="text-white/50">Loading…</p>
+      </div>
+    }>
+      <ComingSoonContent />
+    </Suspense>
   );
 }

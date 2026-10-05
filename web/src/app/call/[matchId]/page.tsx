@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff } from "lucide-react";
 import { io, Socket } from "socket.io-client";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-export default function CallPage() {
+function CallContent() {
   const { matchId } = useParams() as { matchId: string };
   const searchParams = useSearchParams();
   const callType = (searchParams.get("type") || "video") as "audio" | "video";
@@ -225,5 +225,17 @@ export default function CallPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CallPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center text-white">
+        <p>Connecting call…</p>
+      </div>
+    }>
+      <CallContent />
+    </Suspense>
   );
 }

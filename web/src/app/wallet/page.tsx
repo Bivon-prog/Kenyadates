@@ -63,7 +63,7 @@ export default function WalletPage() {
   return (
     <div className="min-h-screen bg-[#0D0D0D] text-white page-pb">
       {toast && (
-        <div className="fixed top-5 inset-x-4 z-50 bg-[#111118] border border-white/15 rounded-2xl px-5 py-4 shadow-2xl flex items-start gap-3 animate-slide-up">
+        <div className="fixed top-5 inset-x-4 max-w-md mx-auto z-50 bg-[#111118] border border-white/15 rounded-2xl px-5 py-4 shadow-2xl flex items-start gap-3 animate-slide-up">
           <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-white/85 leading-snug">{toast}</p>
         </div>
@@ -133,7 +133,7 @@ export default function WalletPage() {
         {tab === "buy" && (
           <div>
             <p className="text-white/40 text-sm mb-4">Paid via M-Pesa · Instant delivery</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {PACKAGES.map(pkg => {
                 const total = pkg.coins + pkg.bonus;
                 const busy  = purchasing === pkg.id;

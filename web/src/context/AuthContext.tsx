@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (newUser.role === 'ADMIN' || newUser.role === 'MODERATOR') {
       router.push('/admin');
     } else {
-      router.push('/app');
+      router.push('/discover');
     }
   };
 

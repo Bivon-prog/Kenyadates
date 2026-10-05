@@ -5,13 +5,14 @@ import { Heart, Shield, Globe, Star, ChevronRight, MapPin, MessageCircle, Video,
 import InstallPrompt from "@/components/InstallPrompt";
 
 const HERO_PROFILES = [
-  { name: "Amina",  age: 26, city: "Nairobi", verified: true,  online: true,  colour: "#C2185B" },
-  { name: "James",  age: 29, city: "Mombasa", verified: true,  online: false, colour: "#1565C0" },
-  { name: "Fatuma", age: 24, city: "Kisumu",  verified: true,  online: true,  colour: "#E65100" },
-  { name: "Kevin",  age: 28, city: "Eldoret", verified: true,  online: true,  colour: "#00695C" },
-  { name: "Grace",  age: 27, city: "Nakuru",  verified: true,  online: false, colour: "#4527A0" },
-  { name: "Brian",  age: 31, city: "Thika",   verified: true,  online: true,  colour: "#AD1457" },
+  { name: "Amina",  age: 26, city: "Nairobi", verified: true,  online: true,  photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" },
+  { name: "James",  age: 29, city: "Mombasa", verified: true,  online: false, photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80" },
+  { name: "Fatuma", age: 24, city: "Kisumu",  verified: true,  online: true,  photo: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80" },
+  { name: "Kevin",  age: 28, city: "Eldoret", verified: true,  online: true,  photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80" },
+  { name: "Grace",  age: 27, city: "Nakuru",  verified: true,  online: false, photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80" },
+  { name: "Brian",  age: 31, city: "Thika",   verified: true,  online: true,  photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80" },
 ];
+
 
 const FEATURES = [
   { icon: Shield,       title: "Face Verified Profiles", desc: "Every profile verified — only real people, no catfishing.",               color: "var(--success)" },
@@ -85,66 +86,69 @@ export default function LandingPage() {
     <div style={{ background: "var(--bg-primary)", minHeight: "100vh", overflowX: "hidden" }}>
 
       {/* ── Navbar ── */}
-      <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 200, /* z-200 above hero content */
-        padding: "16px 24px",
-        background: scrolled ? "rgba(13,13,13,0.97)" : "rgba(13,13,13,0.85)",
-        backdropFilter: "blur(20px)",
-        borderBottom: scrolled ? "1px solid var(--border)" : "none",
-        transition: "all 0.3s ease",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: "#E8336D", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Heart size={18} fill="white" color="white" />
+      <nav className="fixed top-0 inset-x-0 z-[200] px-4 sm:px-8 py-3.5 bg-[#0D0D12]/95 backdrop-blur-xl border-b border-white/10 transition-all flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 no-underline">
+          <div className="w-9 h-9 rounded-xl bg-[#E8336D] flex items-center justify-center shadow-lg">
+            <Heart size={20} fill="white" color="white" />
           </div>
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "white" }}>
-            Kenya<span style={{ background: "var(--gradient-primary)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>dates</span>
+          <span className="font-extrabold text-xl sm:text-2xl text-white tracking-tight">
+            Kenya<span className="text-[#E8336D]">dates</span>
           </span>
-        </div>
+        </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex" style={{ alignItems: "center", gap: 32 }}>
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map(({ label, href }) => (
             <a key={label} href={href}
-              style={{ color: "var(--text-secondary)", fontSize: 15, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
-              onMouseEnter={e => (e.currentTarget.style.color = "white")}
-              onMouseLeave={e => (e.currentTarget.style.color = "var(--text-secondary)")}>
+              className="text-white/70 hover:text-white text-sm font-semibold transition-colors no-underline">
               {label}
             </a>
           ))}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <InstallPrompt />
-          <Link href="/login"    className="btn-secondary hidden sm:inline-flex" style={{ padding: "10px 20px", fontSize: 14 }}>Sign In</Link>
-          <Link href="/register" className="btn-primary    hidden sm:inline-flex" style={{ padding: "10px 20px", fontSize: 14 }}>Join Free</Link>
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl"
-            style={{ background: "rgba(255,255,255,0.08)", border: "none", color: "white", cursor: "pointer" }}>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2.5">
+          <InstallPrompt variant="button" className="hidden sm:flex" />
+          <InstallPrompt variant="badge" className="flex sm:hidden" />
+          
+          <Link href="/login" className="hidden sm:inline-flex px-4 py-2 rounded-full border border-white/20 text-white hover:bg-white/10 font-bold text-xs sm:text-sm transition-all no-underline">
+            Sign In
+          </Link>
+          <Link href="/register" className="hidden sm:inline-flex px-4 py-2 rounded-full bg-gradient-to-r from-[#E8336D] to-[#FF6B9D] text-white font-extrabold text-xs sm:text-sm shadow-md hover:opacity-95 transition-opacity no-underline">
+            Join Free
+          </Link>
+
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 text-white border border-white/15">
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu Drawer */}
       {menuOpen && (
-        <div className="md:hidden fixed inset-x-0 z-[190] animate-slide-up"
-          style={{ top: 65, background: "rgba(13,13,13,0.98)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
-          <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 0 }}>
+        <div className="md:hidden fixed inset-x-0 top-[60px] z-[190] bg-[#12121A]/98 backdrop-blur-2xl border-b border-white/10 p-6 shadow-2xl space-y-4">
+          <InstallPrompt variant="banner" />
+
+          <div className="flex flex-col gap-2">
             {navLinks.map(({ label, href }) => (
               <a key={label} href={href} onClick={() => setMenuOpen(false)}
-                style={{ color: "var(--text-secondary)", fontSize: 16, fontWeight: 500, textDecoration: "none",
-                  padding: "14px 0", borderBottom: "1px solid var(--border)" }}>
+                className="text-white/80 hover:text-white text-base font-semibold py-2.5 border-b border-white/5 no-underline">
                 {label}
               </a>
             ))}
-            <div style={{ display: "flex", gap: 12, paddingTop: 16 }}>
-              <Link href="/login"    className="btn-secondary" style={{ flex: 1, padding: 14, fontSize: 15, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Sign In</Link>
-              <Link href="/register" className="btn-primary"   style={{ flex: 1, padding: 14, fontSize: 15, textAlign: "center" }} onClick={() => setMenuOpen(false)}>Join Free</Link>
-            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Link href="/login" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-center rounded-2xl border border-white/20 text-white font-bold text-sm no-underline bg-white/5">
+              Sign In
+            </Link>
+            <Link href="/register" onClick={() => setMenuOpen(false)} className="flex-1 py-3 text-center rounded-2xl bg-gradient-to-r from-[#E8336D] to-[#FF6B9D] text-white font-extrabold text-sm no-underline shadow-lg">
+              Join Free
+            </Link>
           </div>
         </div>
       )}
+
 
       {/* ── Hero — Change 18: navbar no longer overlaps hero text (z-index fixed) ── */}
       <section className="relative min-h-screen flex items-center pt-28 overflow-hidden">
@@ -203,10 +207,9 @@ export default function LandingPage() {
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "rotate(0deg) scale(1.04)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = `rotate(${pos.rotate}) scale(${pos.scale})`; }}
                 >
-                  <div className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center relative overflow-hidden"
-                    style={{ backgroundColor: p.colour }}>
-                    <span className="text-white font-black select-none" style={{ fontSize: 40, opacity: 0.22 }}>{p.name[0]}</span>
-                    {p.online && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-400" />}
+                  <div className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center relative overflow-hidden bg-[#1E1E2E]">
+                    <img src={p.photo} className="w-full h-full object-cover" alt={p.name} />
+                    {p.online && <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-green-400 ring-2 ring-black" />}
                   </div>
                   <p style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{p.name}, {p.age}</p>
                   <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>{p.city}</p>
@@ -229,7 +232,7 @@ export default function LandingPage() {
             Everything you need for safe, genuine connections — designed for our culture.
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
           {FEATURES.map((f, i) => (
             <div key={f.title} className="card" style={{ padding: 32, transition: "all 0.3s ease" }}
               onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-6px)"; }}

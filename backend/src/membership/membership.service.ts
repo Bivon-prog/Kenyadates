@@ -15,7 +15,23 @@ export class MembershipService {
     });
   }
 
-  // Future feature: Upgrade membership
-  // Since you don't have a specific `membership` field on `User` yet beyond a `Role`,
-  // we would later add a user-membership mapping model. For now, returning plans is enough.
+  async subscribeToPlan(userId: string, planId: string) {
+    const plan = await this.prisma.membershipPlan.findUnique({
+      where: { id: planId },
+    });
+    if (!plan) {
+      throw new BadRequestException('Membership plan not found');
+    }
+
+    // Grant monthly bonus coins associated with the plan
+    if (plan.monthlyCoins > 0) {
+      await this.coinService.grantWelcomeCoins(userId, plan.monthlyCoins);
+    }
+
+    return {
+      success: true,
+      message: `Successfully subscribed to ${plan.name} membership!`,
+      plan,
+    };
+  }
 }

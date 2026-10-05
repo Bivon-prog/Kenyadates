@@ -27,4 +27,18 @@ export class CoinController {
     const balance = await this.coinService.getBalance(req.user.id);
     return { success: true, balance };
   }
+
+  @Post('boost')
+  async activateBoost(@Req() req: any, @Body() body: { boostCost?: number }) {
+    await this.coinService.activateBoost(req.user.id, body?.boostCost);
+    const balance = await this.coinService.getBalance(req.user.id);
+    return { success: true, message: 'Profile boost activated!', balance };
+  }
+
+  @Post('gift')
+  async sendGift(@Req() req: any, @Body() body: { recipientId: string; giftName: string; coinCost: number }) {
+    await this.coinService.sendGift(req.user.id, body.recipientId, body.giftName, body.coinCost || 20);
+    const balance = await this.coinService.getBalance(req.user.id);
+    return { success: true, message: `Gift ${body.giftName} sent!`, balance };
+  }
 }

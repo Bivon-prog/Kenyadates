@@ -108,4 +108,24 @@ export class CoinService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  /** Activate a profile boost (deducts 50 coins) */
+  async activateBoost(userId: string, boostCost = 50) {
+    return this.spendCoins(
+      userId,
+      boostCost,
+      CoinTransactionType.BOOST,
+      'Profile Boost activated (30 minutes of top visibility)',
+    );
+  }
+
+  /** Send a virtual gift to another user */
+  async sendGift(userId: string, recipientId: string, giftName: string, coinCost: number) {
+    return this.spendCoins(
+      userId,
+      coinCost,
+      CoinTransactionType.GIFT,
+      `Sent ${giftName} gift to match`,
+    );
+  }
 }

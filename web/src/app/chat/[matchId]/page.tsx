@@ -4,10 +4,10 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, Phone, Video, Mic, Send, Globe } from "lucide-react";
 import { io, Socket } from "socket.io-client";
+import { getProfileAvatar } from "@/lib/avatar";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const BRAND = "#E8336D";
-const BRAND2 = "#FF6B9D";
 
 interface Message {
   id: string;
@@ -18,29 +18,11 @@ interface Message {
   createdAt: string;
 }
 
-// Avatar — handles solid:, real photo, or initials fallback
 function Avatar({ photos, name, size = 40 }: { photos?: string[]; name?: string; size?: number }) {
-  const photo = photos?.[0] ?? "";
-  if (photo.startsWith("solid:")) {
-    return (
-      <div className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
-        style={{ width: size, height: size, background: photo.replace("solid:", ""), fontSize: size * 0.38 }}>
-        {name?.[0]?.toUpperCase() ?? "?"}
-      </div>
-    );
-  }
-  if (photo && !photo.startsWith("gradient:")) {
-    return (
-      <img src={photo} className="rounded-full object-cover flex-shrink-0"
-        style={{ width: size, height: size }} alt={name} />
-    );
-  }
-  // Initials fallback — no gradient, just a neutral dark background
+  const photoUrl = getProfileAvatar(photos?.[0], name, 0);
   return (
-    <div className="rounded-full flex items-center justify-center font-bold text-white flex-shrink-0 select-none"
-      style={{ width: size, height: size, background: "#1E1E2E", border: "1px solid rgba(255,255,255,0.1)", fontSize: size * 0.38 }}>
-      {name?.[0]?.toUpperCase() ?? "?"}
-    </div>
+    <img src={photoUrl} className="rounded-full object-cover flex-shrink-0 border border-white/20 shadow-sm"
+      style={{ width: size, height: size }} alt={name ?? "Avatar"} />
   );
 }
 
@@ -133,7 +115,6 @@ export default function ChatPage() {
   const sendMessage = useCallback(() => {
     const text = input.trim();
     if (!text) return;
-    // Optimistically add to UI
     const optimistic: Message = {
       id: Date.now().toString(),
       senderId: myId,
@@ -196,12 +177,12 @@ export default function ChatPage() {
 
   // Fallback name/photo for mock
   const displayName = otherProfile?.displayName ?? "Amina";
-  const displayPhotos = otherProfile?.photos ?? ["solid:#C2185B"];
+  const displayPhotos = otherProfile?.photos ?? [];
 
   return (
     <div className="flex flex-col bg-[#0D0D0D] h-[100dvh]">
 
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="flex-shrink-0 bg-[#0D0D10]/95 backdrop-blur-md border-b border-white/8 flex items-center gap-3 px-4 py-3 md:px-6">
         <button
           onClick={() => router.push("/matches")}
@@ -240,7 +221,7 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* ── Messages ── */}
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2 md:px-6">
         {loading ? (
           <div className="flex justify-center py-8">
@@ -303,7 +284,7 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ── Input bar ── */}
+      {/* Input bar */}
       <div className="flex-shrink-0 bg-[#0D0D10]/95 backdrop-blur-md border-t border-white/8 px-4 py-3 md:px-6 flex items-center gap-2.5 safe-area-pb">
         <button
           onMouseDown={startRecording}
@@ -324,9 +305,6 @@ export default function ChatPage() {
           onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
           placeholder="Message in English or Kiswahili…"
           className="flex-1 bg-white/6 border border-white/8 text-white placeholder-white/30 rounded-full px-4 py-2.5 text-sm focus:outline-none transition-colors"
-          style={{ focusBorderColor: BRAND } as any}
-          onFocus={e => e.currentTarget.style.borderColor = `${BRAND}60`}
-          onBlur={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
         />
 
         <button

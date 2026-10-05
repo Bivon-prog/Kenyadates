@@ -54,4 +54,22 @@ export class UsersController {
   requestVerification(@Req() req: any, @Body() body: { selfieUrl?: string }) {
     return this.usersService.requestVerification(req.user.id, body.selfieUrl);
   }
+
+  @Post('block')
+  @ApiOperation({ summary: 'Block a User' })
+  blockUser(@Req() req: any, @Body() body: { targetUserId: string; reason?: string }) {
+    return this.usersService.blockUser(req.user.id, body.targetUserId, body.reason);
+  }
+
+  @Post('unmatch')
+  @ApiOperation({ summary: 'Unmatch a User' })
+  unmatchUser(@Req() req: any, @Body() body: { targetUserId: string }) {
+    return this.usersService.unmatchUser(req.user.id, body.targetUserId);
+  }
+
+  @Post('me/delete')
+  @ApiOperation({ summary: 'Delete Account Permanently' })
+  deleteAccount(@Req() req: any) {
+    return this.usersService.deleteAccount(req.user.id);
+  }
 }

@@ -4,32 +4,45 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CacheService } from '../cache/cache.service';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!,
+  process.env.SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.SUPABASE_SERVICE_KEY || 'placeholder-key',
 );
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cache: CacheService,
+  ) {}
 
   async getProfile(userId: string) {
+    const cacheKey = `user:profile:${userId}`;
+    const cached = await this.cache.get<any>(cacheKey);
+    if (cached) return cached;
+
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: { profile: true, wallet: true },
     });
     if (!user) throw new NotFoundException('User not found');
+
+    await this.cache.set(cacheKey, user, 60);
     return user;
   }
 
   async updateProfile(userId: string, data: any) {
-    return this.prisma.profile.update({
+    const res = await this.prisma.profile.update({
       where: { userId },
       data,
     });
+    await this.cache.del(`user:profile:${userId}`);
+    return res;
   }
+
 
   /**
    * Upload a photo to Supabase Storage and add the URL to the user's profile.
@@ -117,5 +130,73 @@ export class UsersService {
       message: 'Verification submitted. You will be verified shortly.',
       status: 'PENDING',
     };
+  }
+
+  /**
+   * Block a user — creates a Report entry with BLOCKED reason and deletes any active match.
+   */
+  async blockUser(userId: string, targetUserId: string, reason?: string) {
+    await this.prisma.$transaction([
+      this.prisma.report.create({
+        data: {
+          reporterId: userId,
+          reportedUserId: targetUserId,
+          reason: reason || 'BLOCKED',
+          description: 'User blocked via profile / chat actions.',
+        },
+      }),
+      this.prisma.match.deleteMany({
+        where: {
+          OR: [
+            { user1Id: userId, user2Id: targetUserId },
+            { user1Id: targetUserId, user2Id: userId },
+          ],
+        },
+      }),
+      this.prisma.like.deleteMany({
+        where: {
+          OR: [
+            { fromUserId: userId, toUserId: targetUserId },
+            { fromUserId: targetUserId, toUserId: userId },
+          ],
+        },
+      }),
+    ]);
+
+    return { success: true, message: 'User blocked successfully.' };
+  }
+
+  /**
+   * Unmatch a user — removes match record and any likes.
+   */
+  async unmatchUser(userId: string, targetUserId: string) {
+    await this.prisma.$transaction([
+      this.prisma.match.deleteMany({
+        where: {
+          OR: [
+            { user1Id: userId, user2Id: targetUserId },
+            { user1Id: targetUserId, user2Id: userId },
+          ],
+        },
+      }),
+      this.prisma.like.deleteMany({
+        where: {
+          OR: [
+            { fromUserId: userId, toUserId: targetUserId },
+            { fromUserId: targetUserId, toUserId: userId },
+          ],
+        },
+      }),
+    ]);
+
+    return { success: true, message: 'Unmatched successfully.' };
+  }
+
+  /**
+   * Delete current logged-in user account.
+   */
+  async deleteAccount(userId: string) {
+    await this.prisma.user.delete({ where: { id: userId } });
+    return { success: true, message: 'Account deleted permanently.' };
   }
 }

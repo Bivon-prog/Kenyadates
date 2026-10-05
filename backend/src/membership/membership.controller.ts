@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Body, UseGuards } from '@nestjs/common';
 import { MembershipService } from './membership.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -10,5 +10,11 @@ export class MembershipController {
   async getPlans() {
     const plans = await this.membershipService.listPlans();
     return { plans };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('subscribe')
+  async subscribe(@Req() req: any, @Body() body: { planId: string }) {
+    return this.membershipService.subscribeToPlan(req.user.id, body.planId);
   }
 }
