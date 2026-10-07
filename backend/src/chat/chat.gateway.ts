@@ -65,9 +65,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('typing')
   handleTyping(
     @MessageBody() payload: { matchId: string; userId: string; isTyping: boolean },
+    @ConnectedSocket() client: Socket,
   ) {
-    // Broadcast to everyone in the room except sender
-    this.server.to(payload.matchId).emit('typing', {
+    client.to(payload.matchId).emit('typing', {
       userId: payload.userId,
       isTyping: payload.isTyping,
     });
@@ -85,28 +85,38 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('callOffer')
   handleCallOffer(
-    @MessageBody() payload: { matchId: string; callerId: string; offer: RTCSessionDescriptionInit; callType: 'audio' | 'video' },
+    @MessageBody() payload: { matchId: string; callerId: string; callerName?: string; callerPhoto?: string; offer: RTCSessionDescriptionInit; callType: 'audio' | 'video' },
+    @ConnectedSocket() client: Socket,
   ) {
-    this.server.to(payload.matchId).emit('callOffer', payload);
-    this.logger.log(`Call offer from ${payload.callerId} in match ${payload.matchId}`);
+    // Broadcast to room excluding the caller
+    client.to(payload.matchId).emit('callOffer', payload);
+    // Also emit incomingCall globally to room
+    client.to(payload.matchId).emit('incomingCall', payload);
+    this.logger.log(`Call offer from ${payload.callerId} (${payload.callerName ?? 'User'}) in match ${payload.matchId}`);
   }
 
   @SubscribeMessage('callAnswer')
   handleCallAnswer(
     @MessageBody() payload: { matchId: string; answer: RTCSessionDescriptionInit },
+    @ConnectedSocket() client: Socket,
   ) {
-    this.server.to(payload.matchId).emit('callAnswer', payload);
+    client.to(payload.matchId).emit('callAnswer', payload);
+    this.logger.log(`Call answered in match ${payload.matchId}`);
   }
 
   @SubscribeMessage('iceCandidate')
   handleIceCandidate(
     @MessageBody() payload: { matchId: string; candidate: RTCIceCandidateInit },
+    @ConnectedSocket() client: Socket,
   ) {
-    this.server.to(payload.matchId).emit('iceCandidate', payload);
+    client.to(payload.matchId).emit('iceCandidate', payload);
   }
 
   @SubscribeMessage('callEnd')
-  handleCallEnd(@MessageBody() payload: { matchId: string; userId: string }) {
+  handleCallEnd(
+    @MessageBody() payload: { matchId: string; userId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
     this.server.to(payload.matchId).emit('callEnd', payload);
     this.logger.log(`Call ended in match ${payload.matchId}`);
   }

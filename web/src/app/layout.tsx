@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import AppShell from "@/components/AppShell";
+import IncomingCallModal from "@/components/IncomingCallModal";
 
 export const metadata: Metadata = {
   title: "KenyaDates — Real People. Real Connections.",
@@ -42,8 +43,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // data-scroll-behavior="smooth" tells Next.js we're handling smooth scroll
-    // so it suppresses the warning and won't interfere with route transitions
     <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -63,6 +62,7 @@ export default function RootLayout({
             {children}
           </AppShell>
           <BottomNav />
+          <IncomingCallModal />
         </AuthProvider>
       </body>
     </html>
