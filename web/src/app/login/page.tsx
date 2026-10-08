@@ -24,10 +24,20 @@ export default function LoginPage() {
     if (!id || !password) { setError("Please fill in all fields."); setLoading(false); return; }
     try {
       const body = method === "email" ? { email: id, password } : { phoneNumber: id, password };
-      const res  = await fetch(`${API}/auth/login`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-      });
-      const data = await res.json();
+      let res: Response;
+      try {
+        res = await fetch(`${API}/auth/login`, {
+          method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+        });
+      } catch (networkErr: any) {
+        throw new Error(`Network error — cannot reach server. (${networkErr?.message ?? "fetch failed"})`);
+      }
+      let data: any;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Server returned an unexpected response (status ${res.status}).`);
+      }
       if (!res.ok) throw new Error(data.message || "Invalid credentials.");
       login(data.token, data.user);
     } catch (err: any) { setError(err.message); }
@@ -232,6 +242,11 @@ export default function LoginPage() {
             <Link href="/register" style={{ color: "#E8336D", fontWeight: 700, textDecoration: "none" }}>
               Create one
             </Link>
+          </p>
+
+          {/* Debug — remove after fix */}
+          <p style={{ textAlign: "center", fontSize: 10, marginTop: 16, color: "rgba(255,255,255,0.15)", wordBreak: "break-all" }}>
+            API: {API}
           </p>
         </div>
       </div>

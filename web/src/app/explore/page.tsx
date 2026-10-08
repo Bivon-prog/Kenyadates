@@ -30,10 +30,10 @@ export default function ExplorePage() {
     <div className="min-h-screen bg-[#0D0D12] text-white page-pb">
 
       {/* Header */}
-      <div className="max-w-5xl mx-auto px-6 pt-8 pb-6 border-b border-white/10 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="max-w-5xl mx-auto px-6 pt-6 pb-6 border-b border-white/10 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Explore KenyaDates</h1>
-          <p className="text-white/60 text-base mt-1">Discover matches by intent, location, and verified badges</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Explore KenyaDates</h1>
+          <p className="text-white/60 text-sm sm:text-base mt-1">Discover matches by intent, location, and verified badges</p>
         </div>
         <InstallPrompt variant="button" />
       </div>
@@ -72,44 +72,44 @@ export default function ExplorePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <Link href="/verify"
-              className="bg-[#14141F] border border-blue-500/30 rounded-3xl p-6 hover:bg-blue-500/10 transition-all no-underline flex flex-col justify-between shadow-xl group">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center flex-shrink-0 shadow-md">
-                  <Shield className="w-7 h-7 text-blue-400" />
-                </div>
-                <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              className="bg-[#14141F] border border-blue-500/30 rounded-3xl p-5 hover:bg-blue-500/10 transition-all no-underline flex items-center gap-4 md:flex-col md:items-start md:justify-between shadow-xl group min-h-0 md:min-h-[160px]">
+              <div className="w-14 h-14 rounded-2xl bg-blue-500/20 flex items-center justify-center flex-shrink-0 shadow-md ml-2 md:ml-0">
+                <Shield className="w-7 h-7 text-blue-400" />
               </div>
-              <div>
-                <h3 className="text-white font-extrabold text-lg sm:text-xl leading-tight">Get Face Verified</h3>
-                <p className="text-white/60 text-sm mt-2 leading-relaxed">Selfie check gets you the verified blue badge + 50 free coins.</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight">Get Face Verified</h3>
+                  <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                </div>
+                <p className="text-white/60 text-sm mt-1 leading-relaxed">Selfie check gets you the verified blue badge + 50 free coins.</p>
               </div>
             </Link>
 
             <Link href="/discover"
-              className="bg-[#14141F] border border-[#E8336D]/30 rounded-3xl p-6 hover:bg-[#E8336D]/10 transition-all no-underline flex flex-col justify-between shadow-xl group">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#E8336D]/20 flex items-center justify-center flex-shrink-0 shadow-md">
-                  <MapPin className="w-7 h-7 text-[#E8336D]" />
-                </div>
-                <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              className="bg-[#14141F] border border-[#E8336D]/30 rounded-3xl p-5 hover:bg-[#E8336D]/10 transition-all no-underline flex items-center gap-4 md:flex-col md:items-start md:justify-between shadow-xl group min-h-0 md:min-h-[160px]">
+              <div className="w-14 h-14 rounded-2xl bg-[#E8336D]/20 flex items-center justify-center flex-shrink-0 shadow-md ml-2 md:ml-0">
+                <MapPin className="w-7 h-7 text-[#E8336D]" />
               </div>
-              <div>
-                <h3 className="text-white font-extrabold text-lg sm:text-xl leading-tight">Near You Radar</h3>
-                <p className="text-white/60 text-sm mt-2 leading-relaxed">Discover active singles living within 10 km of your current location.</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight">Near You Radar</h3>
+                  <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                </div>
+                <p className="text-white/60 text-sm mt-1 leading-relaxed">Discover active singles living within 10 km of your current location.</p>
               </div>
             </Link>
 
             <Link href="/wallet"
-              className="bg-[#14141F] border border-yellow-500/30 rounded-3xl p-6 hover:bg-yellow-500/10 transition-all no-underline flex flex-col justify-between shadow-xl group">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-14 h-14 rounded-2xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0 shadow-md">
-                  <Star className="w-7 h-7 text-yellow-400" />
-                </div>
-                <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all" />
+              className="bg-[#14141F] border border-yellow-500/30 rounded-3xl p-5 hover:bg-yellow-500/10 transition-all no-underline flex items-center gap-4 md:flex-col md:items-start md:justify-between shadow-xl group min-h-0 md:min-h-[160px]">
+              <div className="w-14 h-14 rounded-2xl bg-yellow-500/20 flex items-center justify-center flex-shrink-0 shadow-md ml-2 md:ml-0">
+                <Star className="w-7 h-7 text-yellow-400" />
               </div>
-              <div>
-                <h3 className="text-white font-extrabold text-lg sm:text-xl leading-tight">Super Likes & Boost</h3>
-                <p className="text-white/60 text-sm mt-2 leading-relaxed">Stand out at the top of recommendations — 3× higher match rate.</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight">Super Likes & Boost</h3>
+                  <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
+                </div>
+                <p className="text-white/60 text-sm mt-1 leading-relaxed">Stand out at the top of recommendations — 3× higher match rate.</p>
               </div>
             </Link>
           </div>
