@@ -77,56 +77,116 @@ export default function MatchesPage() {
 
   // ── MOBILE CHAT VIEW ──────────────────────────────────────────────────────
   if (selected && activeProfile) {
+    const timeStr = (iso: string) => new Date(iso).toLocaleTimeString("en-KE", { hour: "2-digit", minute: "2-digit" });
+    const dateStr = (iso: string) => {
+      const d = new Date(iso);
+      const today = new Date();
+      const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+      if (d.toDateString() === today.toDateString()) return "Today";
+      if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+      return d.toLocaleDateString("en-KE", { day: "numeric", month: "long", year: "numeric" });
+    };
+
+    // Group messages by date
+    let lastDate = "";
+
     return (
-      <div className="fixed inset-0 bg-[#0D0D12] text-white flex flex-col md:hidden" style={{ paddingBottom: 72 }}>
+      <div className="fixed inset-x-0 text-white flex flex-col md:hidden" style={{ top: 0, bottom: 72, background: "#0D0D12" }}>
 
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-[#0D0D12] flex-shrink-0">
-          <button onClick={() => setSelected(null)}
-            className="w-9 h-9 rounded-xl bg-white/6 flex items-center justify-center flex-shrink-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <div className="flex items-center gap-3 px-3 py-2.5 flex-shrink-0" style={{ background: "#111120", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+          <button onClick={() => setSelected(null)} className="w-9 h-9 flex items-center justify-center flex-shrink-0 text-white/70">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           </button>
-          <div className={`w-10 h-10 rounded-full ${BG[activeIdx % BG.length]} flex items-center justify-center text-white font-black text-base flex-shrink-0`}>
+          <div className={`w-10 h-10 rounded-full ${BG[activeIdx % BG.length]} flex items-center justify-center text-white font-black text-base flex-shrink-0 ring-2 ring-white/10`}>
             {activeProfile.displayName[0].toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-extrabold text-white text-sm flex items-center gap-1 truncate">
+            <p className="font-bold text-white text-sm flex items-center gap-1 leading-tight">
               {activeProfile.displayName}
               <Shield className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
             </p>
-            <p className="text-xs text-emerald-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" /> Active now · {activeProfile.city}
-            </p>
+            <p className="text-[11px] text-emerald-400">Active now</p>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <button onClick={() => router.push(`/call/${selected.id}`)} className="w-9 h-9 rounded-xl bg-white/6 flex items-center justify-center">
-              <Phone size={16} />
+          <div className="flex gap-1 flex-shrink-0">
+            <button onClick={() => router.push(`/call/${selected.id}`)} className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:bg-white/10">
+              <Phone size={18} />
             </button>
-            <button onClick={() => router.push(`/call/${selected.id}`)} className="w-9 h-9 rounded-xl bg-[#E8336D]/20 flex items-center justify-center">
-              <Video size={16} />
+            <button onClick={() => router.push(`/call/${selected.id}`)} className="w-9 h-9 rounded-full flex items-center justify-center text-white/60 hover:bg-white/10">
+              <Video size={18} />
             </button>
           </div>
         </div>
 
-        {/* Messages — scrollable */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-          <div className="text-center mb-2">
-            <span className="px-3 py-1.5 rounded-full bg-white/5 text-white/45 text-xs border border-white/10">
-              You matched with {activeProfile.displayName}! Say hi 💬
+        {/* Messages — chat background with subtle pattern */}
+        <div
+          className="flex-1 overflow-y-auto py-3 space-y-1"
+          style={{
+            background: "#0D0D12",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 0)",
+            backgroundSize: "24px 24px",
+            paddingLeft: 16,
+            paddingRight: 16,
+          }}
+        >
+          {/* Matched notice */}
+          <div className="flex justify-center my-3">
+            <span className="px-4 py-1.5 rounded-full text-xs text-white/50 font-medium" style={{ background: "rgba(255,255,255,0.07)" }}>
+              🎉 You matched with {activeProfile.displayName}!
             </span>
           </div>
 
           {selected.messages.map((m, i) => {
             const isMe = m.senderId === myId;
+            const msgDate = dateStr(m.createdAt);
+            const showDate = msgDate !== lastDate;
+            lastDate = msgDate;
+
             return (
-              <div key={i} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed break-words ${
-                  isMe
-                    ? "bg-gradient-to-r from-[#E8336D] to-[#FF6B9D] text-white rounded-br-sm"
-                    : "bg-[#1C1C2A] text-white border border-white/10 rounded-bl-sm"
-                }`}>
-                  <p className="whitespace-pre-wrap">{m.content}</p>
-                  <span className="text-[10px] opacity-55 block mt-1 text-right">{fmt(m.createdAt)}</span>
+              <div key={i}>
+                {/* Date separator */}
+                {showDate && (
+                  <div className="flex justify-center my-3">
+                    <span className="px-3 py-1 rounded-full text-[11px] text-white/45 font-medium" style={{ background: "rgba(255,255,255,0.07)" }}>
+                      {msgDate}
+                    </span>
+                  </div>
+                )}
+
+                <div className={`flex items-end gap-2 mb-2 w-full ${isMe ? "justify-end" : "justify-start"}`}>
+                  {/* Avatar for received messages */}
+                  {!isMe && (
+                    <div className={`w-8 h-8 rounded-full ${BG[activeIdx % BG.length]} flex items-center justify-center text-white font-black text-xs flex-shrink-0 mb-1 self-end`}>
+                      {activeProfile.displayName[0].toUpperCase()}
+                    </div>
+                  )}
+
+                  {/* Bubble */}
+                  <div
+                    style={{
+                      maxWidth: "70%",
+                      padding: "10px 14px",
+                      borderRadius: isMe ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+                      background: isMe ? "linear-gradient(135deg, #E8336D, #C2185B)" : "#1E1E2E",
+                      border: isMe ? "none" : "1px solid rgba(255,255,255,0.1)",
+                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
+                    }}
+                  >
+                    <p style={{ fontSize: 14, lineHeight: 1.5, color: "white", margin: 0, whiteSpace: "pre-wrap" }}>{m.content}</p>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4, marginTop: 4, opacity: 0.6 }}>
+                      <span style={{ fontSize: 10, color: "white" }}>{timeStr(m.createdAt)}</span>
+                      {isMe && (
+                        <svg width="14" height="9" viewBox="0 0 16 11" fill="none">
+                          <path d="M1 5.5L5 9.5L15 1.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M5 5.5L9 9.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Spacer for sent messages (keeps bubble from hitting right edge) */}
+                  {isMe && <div style={{ width: 8, flexShrink: 0 }} />}
                 </div>
               </div>
             );
@@ -134,8 +194,14 @@ export default function MatchesPage() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input — sits above bottom nav */}
-        <div className="flex-shrink-0 flex items-end gap-2 px-4 py-3 border-t border-white/10 bg-[#0D0D12]">
+        {/* Input bar — WhatsApp style */}
+        <div className="flex-shrink-0 flex items-end gap-2 px-4 py-2" style={{ background: "#111120", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+          {/* Emoji */}
+          <button className="w-9 h-9 flex items-center justify-center text-white/50 flex-shrink-0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </button>
+
+          {/* Text input */}
           <textarea
             ref={textareaRef}
             value={msg}
@@ -146,15 +212,25 @@ export default function MatchesPage() {
               t.style.height = "auto";
               t.style.height = Math.min(t.scrollHeight, 120) + "px";
             }}
-            placeholder={`Message ${activeProfile.displayName}…`}
+            placeholder="Message"
             rows={1}
-            className="flex-1 bg-[#1C1C2A] border border-white/10 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/35 outline-none focus:border-[#E8336D] transition-colors resize-none"
-            style={{ lineHeight: "1.5", minHeight: 46, maxHeight: 120 }}
+            className="flex-1 text-white text-sm placeholder:text-white/35 outline-none resize-none rounded-2xl px-4 py-2.5"
+            style={{ background: "#1E1E2E", border: "1px solid rgba(255,255,255,0.08)", lineHeight: "1.5", minHeight: 42, maxHeight: 120, paddingLeft: 16, paddingRight: 16 }}
           />
-          <button onClick={send}
-            className="w-11 h-11 rounded-xl bg-gradient-to-r from-[#E8336D] to-[#FF6B9D] flex items-center justify-center flex-shrink-0 active:scale-95 shadow-lg">
-            <Send size={16} className="text-white" />
-          </button>
+
+          {/* Send / Mic button */}
+          {msg.trim() ? (
+            <button onClick={send}
+              className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0 active:scale-95 shadow-lg"
+              style={{ background: "linear-gradient(135deg, #E8336D, #C2185B)" }}>
+              <Send size={18} className="text-white" style={{ marginLeft: 2 }} />
+            </button>
+          ) : (
+            <button className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: "linear-gradient(135deg, #E8336D, #C2185B)" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="white" strokeWidth="2" fill="none" strokeLinecap="round"/><line x1="12" y1="19" x2="12" y2="23" stroke="white" strokeWidth="2" strokeLinecap="round"/><line x1="8" y1="23" x2="16" y2="23" stroke="white" strokeWidth="2" strokeLinecap="round"/></svg>
+            </button>
+          )}
         </div>
       </div>
     );
@@ -170,7 +246,7 @@ export default function MatchesPage() {
         <p className="text-white/50 text-sm mt-1">Connect with verified singles who matched with you</p>
       </div>
 
-      <div className="max-w-6xl mx-auto px-5">
+      <div className="max-w-6xl mx-auto px-5 pb-8">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="w-12 h-12 border-4 border-[#E8336D] border-t-transparent rounded-full animate-spin" />
@@ -192,7 +268,9 @@ export default function MatchesPage() {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
                 <input value={search} onChange={e => setSearch(e.target.value)}
                   placeholder="Search matches by name…"
-                  className="w-full bg-[#1C1C2A] border border-white/10 rounded-2xl pl-11 pr-4 py-3 text-white placeholder:text-white/40 text-sm outline-none focus:border-[#E8336D] transition-colors" />
+                  className="w-full rounded-2xl text-white placeholder:text-white/40 text-sm outline-none transition-colors"
+                  style={{ background: "#1C1C2A", border: "1px solid rgba(255,255,255,0.1)", padding: "14px 16px 14px 44px" }}
+                />
               </div>
 
               {newM.length > 0 && (

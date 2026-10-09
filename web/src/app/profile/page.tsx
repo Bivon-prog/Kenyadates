@@ -92,114 +92,80 @@ export default function ProfilePage() {
       <input ref={photoRef} type="file" accept="image/*" className="hidden" onChange={e => { if (e.target.files?.[0]) uploadPhoto(e.target.files[0]); }} />
 
       {/* Top Header Bar */}
-      <div className="max-w-5xl mx-auto px-6 pt-8 pb-6 flex flex-wrap items-center justify-between border-b border-white/10 mb-8 gap-4">
+      <div className="max-w-5xl mx-auto px-5 pt-6 pb-5 flex flex-wrap items-start justify-between border-b border-white/10 mb-6 gap-3">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">My Profile</h1>
-          <p className="text-white/60 text-base mt-1">Manage your account, photos, and subscription</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">My Profile</h1>
+          <p className="text-white/50 text-sm mt-1">Manage your account, photos, and subscription</p>
         </div>
-        <div className="flex items-center gap-3">
-          <InstallPrompt variant="button" />
+        <div className="flex items-center gap-2 flex-wrap">
           {!fullyVerified && (
-            <Link href="/verify" className="flex items-center gap-2 bg-blue-500/15 border border-blue-500/40 text-blue-400 text-sm font-extrabold px-5 py-2.5 rounded-full hover:bg-blue-500/25 transition-all no-underline shadow-md">
-              <Shield className="w-4 h-4" /> Get Verified
+            <Link href="/verify" className="flex items-center gap-1.5 bg-blue-500/15 border border-blue-500/40 text-blue-400 text-xs font-extrabold px-3 py-2 rounded-full no-underline">
+              <Shield className="w-3.5 h-3.5" /> Get Verified
             </Link>
           )}
-          <Link href="/wallet" className="flex items-center gap-2 bg-yellow-500/15 border border-yellow-500/40 px-4 py-2.5 rounded-full text-yellow-400 font-extrabold text-sm sm:text-base no-underline shadow-md">
-            <span>🪙 {coins} Coins</span>
+          <Link href="/wallet" className="flex items-center gap-1.5 bg-yellow-500/15 border border-yellow-500/40 px-3 py-2 rounded-full text-yellow-400 font-extrabold text-xs no-underline">
+            🪙 {coins} Coins
           </Link>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 space-y-8">
-        {/* Mobile PWA/APK Installation Banner */}
-        <InstallPrompt variant="banner" />
+      <div className="max-w-5xl mx-auto px-5 space-y-6">
 
         {/* Responsive Desktop Layout: 2-Column Split View */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
           
-          {/* Left Column: Large Avatar Card, Completeness & Coins */}
-          <div className="md:col-span-5 bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl flex flex-col items-center">
-            <div className="relative mb-6">
-              <svg className="absolute inset-0 w-[170px] h-[170px] -m-3.5 -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
-                <circle cx="50" cy="50" r="44" fill="none" stroke="#E8336D" strokeWidth="4" strokeDasharray="276" strokeDashoffset={276 - (276 * comp) / 100} strokeLinecap="round" />
-              </svg>
-              <div className="w-36 h-36 rounded-full border-4 border-[#14141F] shadow-2xl overflow-hidden bg-[#1E1E2E] relative">
-                <img src={displayPhotos[0]} alt={name} className="w-full h-full object-cover" />
-              </div>
-              <button onClick={() => photoRef.current?.click()} disabled={uploading}
-                className="absolute bottom-1 right-1 w-11 h-11 rounded-full bg-gradient-to-tr from-[#E8336D] to-[#FF6B9D] border-2 border-[#14141F] flex items-center justify-center shadow-xl hover:scale-105 transition-transform">
-                {uploading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
-              </button>
-            </div>
+          {/* Left Column — separate cards */}
+          <div className="md:col-span-5 flex flex-col gap-5">
 
-            <h2 className="text-3xl font-black text-white flex items-center gap-2.5">
-              {name}{p?.age ? `, ${p.age}` : ", 25"}
-              {fullyVerified && <Shield className="w-6 h-6 text-blue-400 fill-blue-400/20" />}
-            </h2>
-            <p className="text-white/60 text-base flex items-center gap-2 mt-1 font-semibold"><MapPin className="w-4 h-4 text-[#E8336D]" />{p?.city ?? "Nairobi, Kenya"}</p>
-
-            <div className="mt-6 w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-4">
-              <div className="flex-1 mr-4">
-                <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full transition-all" style={{ width: `${comp}%`, background: "linear-gradient(to right, #E8336D, #FF6B9D)" }} />
+            {/* Avatar card */}
+            <div className="bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl flex flex-col items-center">
+              <div className="relative mb-6">
+                <svg className="absolute inset-0 w-[170px] h-[170px] -m-3.5 -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="4" />
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="#E8336D" strokeWidth="4" strokeDasharray="276" strokeDashoffset={276 - (276 * comp) / 100} strokeLinecap="round" />
+                </svg>
+                <div className="w-36 h-36 rounded-full border-4 border-[#14141F] shadow-2xl overflow-hidden bg-[#1E1E2E] relative">
+                  <img src={displayPhotos[0]} alt={name} className="w-full h-full object-cover" />
                 </div>
+                <button onClick={() => photoRef.current?.click()} disabled={uploading}
+                  className="absolute bottom-1 right-1 w-11 h-11 rounded-full bg-gradient-to-tr from-[#E8336D] to-[#FF6B9D] border-2 border-[#14141F] flex items-center justify-center shadow-xl hover:scale-105 transition-transform">
+                  {uploading ? <Loader2 className="w-5 h-5 text-white animate-spin" /> : <Camera className="w-5 h-5 text-white" />}
+                </button>
               </div>
-              <span className="text-white/80 text-sm font-extrabold whitespace-nowrap">{comp}% complete</span>
+              <h2 className="text-3xl font-black text-white flex items-center gap-2.5">
+                {name}{p?.age ? `, ${p.age}` : ", 25"}
+                {fullyVerified && <Shield className="w-6 h-6 text-blue-400 fill-blue-400/20" />}
+              </h2>
+              <p className="text-white/60 text-base flex items-center gap-2 mt-1 font-semibold">
+                <MapPin className="w-4 h-4 text-[#E8336D]" />{p?.city ?? "Nairobi, Kenya"}
+              </p>
+              <div className="mt-6 w-full flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-4">
+                <div className="flex-1 mr-4">
+                  <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${comp}%`, background: "linear-gradient(to right, #E8336D, #FF6B9D)" }} />
+                  </div>
+                </div>
+                <span className="text-white/80 text-sm font-extrabold whitespace-nowrap">{comp}% complete</span>
+              </div>
             </div>
 
-            {/* Upgrade banner */}
-            <Link href="/wallet" className="w-full mt-6 flex flex-col sm:flex-row items-center justify-between rounded-3xl p-6 border border-yellow-500/40 hover:border-yellow-500/70 transition-all no-underline gap-4 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-transparent shadow-xl">
+            {/* Upgrade card — separate */}
+            <Link href="/wallet" className="w-full flex items-center justify-between rounded-3xl p-5 border border-yellow-500/40 hover:border-yellow-500/70 transition-all no-underline gap-4 bg-gradient-to-r from-yellow-500/15 via-amber-500/10 to-transparent shadow-xl">
               <div className="flex items-center gap-4 min-w-0 flex-1">
-                <div className="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center flex-shrink-0"><Crown className="w-6 h-6 text-yellow-400" /></div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-white font-black text-lg leading-tight truncate">Upgrade to Gold</p>
-                  <p className="text-white/60 text-xs sm:text-sm mt-1 truncate">See who likes you · Unlimited swipes</p>
+                <div className="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center flex-shrink-0">
+                  <Crown className="w-6 h-6 text-yellow-400" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-white font-black text-base leading-tight">Upgrade to Gold</p>
+                  <p className="text-white/55 text-xs mt-0.5">See who likes you · Unlimited swipes</p>
                 </div>
               </div>
-              <span className="px-5 py-2.5 rounded-full text-sm font-black text-[#0D0D12] flex-shrink-0 bg-gradient-to-r from-amber-400 to-yellow-400 shadow-lg">Upgrade</span>
+              <span className="px-4 py-2 rounded-full text-sm font-black text-[#0D0D12] flex-shrink-0 bg-gradient-to-r from-amber-400 to-yellow-400 shadow-lg">Upgrade</span>
             </Link>
-
-            {/* Sign out */}
-            <button onClick={logout}
-              className="w-full mt-6 flex items-center justify-center gap-2 py-4 rounded-2xl border border-red-500/30 text-red-400 text-base font-extrabold hover:bg-red-500/10 transition-colors">
-              <LogOut className="w-5 h-5" /> Sign Out
-            </button>
           </div>
 
-          {/* Right Column: About Me, Photos Grid, Interests & App Settings */}
-          <div className="md:col-span-7 space-y-8">
-
-            {/* About Me */}
-            <div className="bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-extrabold text-white">About Me</h3>
-                <div className="flex gap-3">
-                  {editBio ? (
-                    <>
-                      <button onClick={saveBio} disabled={savingBio} className="flex items-center gap-1.5 text-emerald-400 text-sm font-bold">
-                        {savingBio ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />} Save
-                      </button>
-                      <button onClick={() => { setEditBio(false); setBio(p?.bio ?? ""); }} className="text-white/40 hover:text-white"><X size={16} /></button>
-                    </>
-                  ) : (
-                    <button onClick={() => setEditBio(true)} className="flex items-center gap-1.5 text-[#E8336D] text-sm font-extrabold hover:underline"><Pencil size={15} /> Edit Bio</button>
-                  )}
-                </div>
-              </div>
-              {editBio ? (
-                <textarea value={bio} onChange={e => setBio(e.target.value)} rows={4} maxLength={200}
-                  className="w-full bg-white/5 border border-[#E8336D]/60 rounded-2xl p-4 text-white text-base leading-relaxed resize-none outline-none focus:border-[#E8336D] transition-colors"
-                  placeholder="Tell potential matches about yourself…" />
-              ) : (
-                <div className="bg-[#1C1C2A] border border-white/10 rounded-2xl p-5 min-h-[84px]">
-                  <p className="text-white/90 text-base sm:text-lg leading-relaxed font-normal">
-                    {bio || <span className="text-white/40 italic">No bio yet — tap Edit to add one</span>}
-                  </p>
-                </div>
-              )}
-            </div>
-
+          {/* Right Column — each section is its own card with gap between */}
+          <div className="md:col-span-7 flex flex-col gap-5">
             {/* Photos 6-Grid */}
             <div className="bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl">
               <div className="flex items-center justify-between mb-5">
@@ -230,18 +196,18 @@ export default function ProfilePage() {
             </div>
 
             {/* Interests */}
-            <div className="bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl">
+            <div className="bg-[#14141F] border border-white/15 rounded-3xl shadow-2xl" style={{ padding: "28px 28px" }}>
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-xl font-extrabold text-white">Interests & Hobbies</h3>
                 <button onClick={() => setEditInt(e => !e)} className="flex items-center gap-1.5 text-[#E8336D] text-sm font-extrabold hover:underline"><Pencil size={15} /> {editInt ? "Done" : "Edit"}</button>
               </div>
               {editInt ? (
                 <>
-                  <div className="flex flex-wrap gap-2.5 mb-5">
+                  <div className="flex flex-wrap gap-3 mb-5">
                     {INTEREST_OPTIONS.map(opt => (
                       <button key={opt} onClick={() => setInterests(p => p.includes(opt) ? p.filter(x => x !== opt) : p.length < 10 ? [...p, opt] : p)}
-                        className="px-4 py-2.5 rounded-full text-sm font-bold border transition-all"
-                        style={{ borderColor: interests.includes(opt) ? "#E8336D" : "rgba(255,255,255,0.15)", background: interests.includes(opt) ? "rgba(232,51,109,0.2)" : "rgba(255,255,255,0.04)", color: interests.includes(opt) ? "white" : "rgba(255,255,255,0.7)" }}>
+                        className="rounded-full text-sm font-bold border transition-all"
+                        style={{ padding: "10px 18px", borderColor: interests.includes(opt) ? "#E8336D" : "rgba(255,255,255,0.15)", background: interests.includes(opt) ? "rgba(232,51,109,0.2)" : "rgba(255,255,255,0.04)", color: interests.includes(opt) ? "white" : "rgba(255,255,255,0.7)" }}>
                         {opt}
                       </button>
                     ))}
@@ -249,9 +215,9 @@ export default function ProfilePage() {
                   <button onClick={saveInt} className="w-full py-4 rounded-2xl text-base font-extrabold text-white bg-gradient-to-r from-[#E8336D] to-[#FF6B9D] hover:opacity-95 transition-opacity shadow-lg">Save Interests</button>
                 </>
               ) : (
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-3">
                   {interests.map(item => (
-                    <span key={item} className="bg-white/8 border border-white/15 rounded-full px-5 py-2.5 text-white/90 text-sm font-bold">
+                    <span key={item} className="bg-white/8 border border-white/15 rounded-full text-white/90 text-sm font-bold" style={{ padding: "10px 20px" }}>
                       {item}
                     </span>
                   ))}
@@ -260,7 +226,7 @@ export default function ProfilePage() {
             </div>
 
             {/* App Settings List */}
-            <div className="bg-[#14141F] border border-white/15 rounded-3xl p-8 shadow-2xl">
+            <div className="bg-[#14141F] border border-white/15 rounded-3xl shadow-2xl" style={{ padding: "28px 28px" }}>
               <h3 className="text-xl font-extrabold text-white mb-5">Settings & Verification</h3>
               <div className="bg-[#1A1A26] border border-white/10 rounded-2xl overflow-hidden divide-y divide-white/8">
                 {[
@@ -270,10 +236,11 @@ export default function ProfilePage() {
                   { icon: Shield,   label: "Verification Status",   href: "/verify" },
                 ].map(item => (
                   <Link key={item.label} href={item.href}
-                    className="flex items-center justify-between px-6 py-5 hover:bg-white/5 transition-colors no-underline">
+                    className="flex items-center justify-between hover:bg-white/5 transition-colors no-underline"
+                    style={{ padding: "18px 20px" }}>
                     <div className="flex items-center gap-4">
                       <item.icon className="w-5 h-5 text-white/60 flex-shrink-0" />
-                      <span className="text-white font-extrabold text-base sm:text-lg">{item.label}</span>
+                      <span className="text-white font-extrabold text-base">{item.label}</span>
                     </div>
                     <ChevronRight className="w-5 h-5 text-white/40" />
                   </Link>
@@ -281,8 +248,13 @@ export default function ProfilePage() {
               </div>
             </div>
 
-          </div>
-        </div>
+            {/* Sign out — last item */}
+            <button onClick={logout}
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl border border-red-500/30 text-red-400 text-base font-extrabold hover:bg-red-500/10 transition-colors">
+              <LogOut className="w-5 h-5" /> Sign Out
+            </button>
+
+          </div>        </div>
       </div>
     </div>
   );

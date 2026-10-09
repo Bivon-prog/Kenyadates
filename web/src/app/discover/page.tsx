@@ -193,8 +193,7 @@ export default function DiscoverPage() {
     <div className="bg-[#0D0D12] text-white" style={{ height: "100dvh", display: "flex", flexDirection: "column" }}>
 
       {/* ═══════════ MOBILE LAYOUT ═══════════ */}
-      {/* pb-[72px] accounts for the fixed bottom nav height */}
-      <div className="flex flex-col h-full lg:hidden" style={{ paddingBottom: 72 }}>
+      <div className="flex flex-col lg:hidden" style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 72 }}>
 
         {/* Tabs — large, full-width */}
         <div className="flex-shrink-0 px-4 pt-4 pb-3">
